@@ -1,0 +1,15 @@
+{
+  "name": "rtmp-timer-rec",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "cron": "^1.3.0",
+    "moment": "^2.22.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1"
+  },
+  "scripts": {
+    "start": "node ./index.js"
+  }
+}
