@@ -45,6 +45,7 @@ function execJob(source, program) {
   const recTimeForSec = program.recTime * 60;
   const execCmd = `${rtmpdumpExePath} --rtmp ${source} -v R -e -o "${outFilePath}" -B ${recTimeForSec}`;
   console.log(execCmd);
+
   exec(execCmd, (err, stdout, stderr) => {
     if (err) console.log(err);
     console.log(stdout);
@@ -54,7 +55,7 @@ function execJob(source, program) {
 function setJob(source, program) {
   const cronTimeString = `${program.startTime.seconds} ${program.startTime.minutes} ${program.startTime.hours} ${program.startTime.date} ${program.startTime.month} ${program.startTime.dayOfWeek}`;
 
-  const job = new CronJob(cronTimeString, (source, program) => {
+  const job = new CronJob(cronTimeString, () => {
     execJob(source, program);
   }, null, true, TIME_ZONE);
 
