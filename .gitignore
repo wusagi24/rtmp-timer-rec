@@ -69,3 +69,6 @@ typings/
 # program data
 /config/programs.json
 /config/temp-programs.jsonc
+
+# build script
+/dist

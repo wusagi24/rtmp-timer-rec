@@ -1,9 +1,9 @@
-const path = require('path');
-const fs = require('fs');
-const { exec } = require('child_process');
+import path from 'path';
+import fs from 'fs';
+import { exec } from 'child_process';
 
-const moment = require('moment');
-const { CronJob } = require('cron');
+import moment from 'moment';
+import { CronJob } from 'cron';
 
 const TIME_ZONE = 'Asia/Tokyo';
 const DOWNLOAD_EXT = 'flv';
