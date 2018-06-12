@@ -5,6 +5,8 @@ import { exec } from 'child_process';
 import moment from 'moment';
 import { CronJob } from 'cron';
 
+import GetAgqrStreamUrl from './getAgqrStreamUrl';
+
 const TIME_ZONE = 'Asia/Tokyo';
 const DOWNLOAD_EXT = 'flv';
 const CONFIG_DIR = 'config';
@@ -26,10 +28,11 @@ function getPrograms() {
   return programs;
 }
 
-function getRTMPSourcePath() {
-  const sourceUrl = 'rtmp://fms-base1.mitene.ad.jp/agqr/aandg1';
+async function getRTMPSourcePath() {
+  const getAgqrStreamUrl = GetAgqrStreamUrl();
+  const url = await getAgqrStreamUrl.get();
 
-  return sourceUrl;
+  return url;
 }
 
 function execJob(source, program) {
@@ -64,9 +67,9 @@ function setJob(source, program) {
   return job;
 }
 
-(() => {
+(async () => {
   const programs = getPrograms();
-  const sourceUrl = getRTMPSourcePath();
+  const sourceUrl = await getRTMPSourcePath();
 
   const jobs = programs.map(program => setJob(sourceUrl, program), []);
 })();
