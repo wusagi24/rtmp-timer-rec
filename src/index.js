@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import moment from 'moment';
 import { CronJob } from 'cron';
 
-import GetAgqrStreamUrl from './getAgqrStreamUrl';
+import AgqrStreamUrl from './AgqrStreamUrl';
 
 const TIME_ZONE = 'Asia/Tokyo';
 const DOWNLOAD_EXT = 'flv';
@@ -29,8 +29,8 @@ function getPrograms() {
 }
 
 async function getRTMPSourcePath() {
-  const getAgqrStreamUrl = GetAgqrStreamUrl();
-  const url = await getAgqrStreamUrl.get();
+  const agqrStreamUrl = AgqrStreamUrl();
+  const url = await agqrStreamUrl.get();
 
   return url;
 }

@@ -3,6 +3,10 @@ import { parseString } from 'xml2js';
 
 const SERVER_INFO_URL = 'http://www.uniqueradio.jp/agplayerf/getfmsListHD.php';
 
+/**
+ * @param {Object} data
+ * @return {string}
+ */
 function takeStreamUrl(data) {
   const serverinfo = data.ag.serverlist[0].serverinfo[0];
   const server = serverinfo.server[0].match(/^.*(rtmp.*)$/)[1];
@@ -13,7 +17,11 @@ function takeStreamUrl(data) {
   return streamUrl;
 }
 
-function xmlText2Js(text) {
+/**
+ * @param {string} text
+ * @return {Promise<Object, Error>}
+ */
+function xmlStrToJs(text) {
   return new Promise((resolve, reject) => {
     parseString(text, (err, result) => {
       if (err) { reject(err); }
@@ -22,25 +30,29 @@ function xmlText2Js(text) {
   });
 }
 
+/**
+ * @return {string}
+ */
 async function fetchStreamUrl() {
   const res = await fetch(SERVER_INFO_URL);
-  const resText = await res.text();
-  const data = await xmlText2Js(resText);
+  const resStr = await res.text();
+  const data = await xmlStrToJs(resStr);
   const url = takeStreamUrl(data);
 
   return url;
 }
 
-function genGetAgqrStreamUrl() {
+/**
+ * @return {{get: Function, clear: Function}}
+ */
+function AgqrStreamUrl() {
   let urlCache = null;
 
   return {
     get: async (force = false) => {
       if (force || !urlCache) {
         urlCache = await fetchStreamUrl();
-        return urlCache;
       }
-
       return urlCache;
     },
     clear: () => {
@@ -49,4 +61,4 @@ function genGetAgqrStreamUrl() {
   };
 }
 
-export default genGetAgqrStreamUrl;
+export default AgqrStreamUrl;
