@@ -21,7 +21,7 @@ function takeStreamUrl(data) {
  * @param {string} text
  * @return {Promise<Object, Error>}
  */
-function xmlStrToJs(text) {
+export function xmlStrToJs(text) {
   return new Promise((resolve, reject) => {
     parseString(text, (err, result) => {
       if (err) { reject(err); }
@@ -33,7 +33,7 @@ function xmlStrToJs(text) {
 /**
  * @return {string}
  */
-async function fetchStreamUrl() {
+export async function fetchStreamUrl() {
   const res = await fetch(SERVER_INFO_URL);
   const resStr = await res.text();
   const data = await xmlStrToJs(resStr);

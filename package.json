@@ -11,10 +11,14 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "eslint": "^4.19.1"
+    "babel-register": "^6.26.0",
+    "eslint": "^4.19.1",
+    "mocha": "^5.2.0",
+    "power-assert": "^1.6.0"
   },
   "scripts": {
     "start": "babel-node src/index.js",
+    "test": "mocha --require babel-register test/**/*.test.js",
     "build": "babel src -d dist",
     "exec": "node dist/index.js"
   }
