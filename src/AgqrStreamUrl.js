@@ -1,13 +1,37 @@
 import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
-const SERVER_INFO_URL = 'http://www.uniqueradio.jp/agplayerf/getfmsListHD.php';
+export const SERVER_INFO_URL = 'http://www.uniqueradio.jp/agplayerf/getfmsListHD.php';
+
+/**
+ * @param {string} url
+ * @return {string}
+ */
+export async function fetchXmlStr(url) {
+  const res = await fetch(url);
+  const resStr = await res.text();
+
+  return resStr;
+}
+
+/**
+ * @param {string} xml
+ * @return {Promise<Object, Error>}
+ */
+export function xmlStrToJs(xml) {
+  return new Promise((resolve, reject) => {
+    parseString(xml, (err, result) => {
+      if (err) { reject(err); }
+      resolve(result);
+    });
+  });
+}
 
 /**
  * @param {Object} data
  * @return {string}
  */
-function takeStreamUrl(data) {
+export function takeStreamUrl(data) {
   const serverinfo = data.ag.serverlist[0].serverinfo[0];
   const server = serverinfo.server[0].match(/^.*(rtmp.*)$/)[1];
   const app = serverinfo.app[0];
@@ -18,25 +42,12 @@ function takeStreamUrl(data) {
 }
 
 /**
- * @param {string} text
- * @return {Promise<Object, Error>}
- */
-export function xmlStrToJs(text) {
-  return new Promise((resolve, reject) => {
-    parseString(text, (err, result) => {
-      if (err) { reject(err); }
-      resolve(result);
-    });
-  });
-}
-
-/**
+ * @param {string} xmlUrl
  * @return {string}
  */
-export async function fetchStreamUrl() {
-  const res = await fetch(SERVER_INFO_URL);
-  const resStr = await res.text();
-  const data = await xmlStrToJs(resStr);
+export async function fetchStreamUrl(xmlUrl) {
+  const xmlStr = await fetchXmlStr(xmlUrl);
+  const data = await xmlStrToJs(xmlStr);
   const url = takeStreamUrl(data);
 
   return url;
@@ -51,7 +62,7 @@ function AgqrStreamUrl() {
   return {
     get: async (force = false) => {
       if (force || !urlCache) {
-        urlCache = await fetchStreamUrl();
+        urlCache = await fetchStreamUrl(SERVER_INFO_URL);
       }
       return urlCache;
     },
