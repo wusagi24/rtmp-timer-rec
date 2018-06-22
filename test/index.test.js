@@ -16,10 +16,7 @@ describe('index', () => {
       programs = require(programsJsonPath);
     });
 
-    it('Json ファイルをオブジェクトとして読み込む', () => {
-      const loadPrograms = getPrograms();
-      assert.deepEqual(loadPrograms, programs);
-    });
+    it('録音スケジュールファイルを正しく読み込めている');
   });
 
   describe('getRTMPSourcePath()', () => {

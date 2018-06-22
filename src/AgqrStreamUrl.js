@@ -1,31 +1,5 @@
-import fetch from 'node-fetch';
-import { parseString } from 'xml2js';
-
 import * as CONFIG from '../config/config.json';
-
-/**
- * @param {string} url
- * @return {string}
- */
-export async function fetchXmlStr(url) {
-  const res = await fetch(url);
-  const resStr = await res.text();
-
-  return resStr;
-}
-
-/**
- * @param {string} xml
- * @return {Promise<Object, Error>}
- */
-export function xmlStrToJs(xml) {
-  return new Promise((resolve, reject) => {
-    parseString(xml, (err, result) => {
-      if (err) { reject(err); }
-      resolve(result);
-    });
-  });
-}
+import { fetchXmlStr, parseXml } from './util';
 
 /**
  * @param {Object} data
@@ -47,7 +21,7 @@ export function takeStreamUrl(data) {
  */
 export async function fetchStreamUrl(xmlUrl) {
   const xmlStr = await fetchXmlStr(xmlUrl);
-  const data = await xmlStrToJs(xmlStr);
+  const data = await parseXml(xmlStr);
   const url = takeStreamUrl(data);
 
   return url;

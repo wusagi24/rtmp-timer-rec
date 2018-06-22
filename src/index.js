@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import { exec } from 'child_process';
 
 import moment from 'moment';
@@ -7,6 +6,7 @@ import { CronJob } from 'cron';
 
 import * as CONST from './const';
 import * as CONFIG from '../config/config.json';
+import { loadLocalJsonData } from './util';
 import AgqrStreamUrl from './AgqrStreamUrl';
 
 const projectRoot = path.resolve('');
@@ -14,10 +14,9 @@ const libsDirPath = path.join(projectRoot, CONST.LIBS_DIR);
 const downloadDirPath = path.join(projectRoot, CONST.DOWNLOAD_DIR);
 const rtmpdumpExePath = path.join(libsDirPath, CONFIG.RTMP_EXE);
 
-export function getPrograms() {
+export async function getPrograms() {
   const programDataPath = path.join(projectRoot, CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
-  const jsonData = fs.readFileSync(programDataPath, CONST.ENCODE_TYPE);
-  const programs = JSON.parse(jsonData);
+  const programs = await loadLocalJsonData(programDataPath);
 
   return programs;
 }
@@ -62,7 +61,7 @@ function setJob(source, program) {
 }
 
 (async () => {
-  const programs = getPrograms();
+  const programs = await getPrograms();
   const sourceUrl = await getRTMPSourcePath();
 
   const jobs = programs.map(program => setJob(sourceUrl, program), []);
