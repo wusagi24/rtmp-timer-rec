@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
-export const SERVER_INFO_URL = 'http://www.uniqueradio.jp/agplayerf/getfmsListHD.php';
+import * as CONFIG from '../config/config.json';
 
 /**
  * @param {string} url
@@ -62,7 +62,7 @@ function AgqrStreamUrl() {
   return {
     get: async (force = false) => {
       if (force || !urlCache) {
-        urlCache = await fetchStreamUrl(SERVER_INFO_URL);
+        urlCache = await fetchStreamUrl(CONFIG.SERVER_INFO_URL);
       }
       return urlCache;
     },

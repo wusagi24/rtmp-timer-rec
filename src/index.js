@@ -5,24 +5,18 @@ import { exec } from 'child_process';
 import moment from 'moment';
 import { CronJob } from 'cron';
 
+import * as CONST from './const';
+import * as CONFIG from '../config/config.json';
 import AgqrStreamUrl from './AgqrStreamUrl';
 
-const TIME_ZONE = 'Asia/Tokyo';
-const DOWNLOAD_EXT = 'flv';
-export const CONFIG_DIR = 'config';
-const LIBS_DIR = 'libs';
-export const PROGRAM_DATA = 'programs.json';
-const RTMP_EXE = 'rtmpdump';
-const DOWNLOAD_DIR = 'downloads';
-
 const projectRoot = path.resolve('');
-const libsDirPath = path.join(projectRoot, LIBS_DIR);
-const downloadDirPath = path.join(projectRoot, DOWNLOAD_DIR);
-const rtmpdumpExePath = path.join(libsDirPath, RTMP_EXE);
+const libsDirPath = path.join(projectRoot, CONST.LIBS_DIR);
+const downloadDirPath = path.join(projectRoot, CONST.DOWNLOAD_DIR);
+const rtmpdumpExePath = path.join(libsDirPath, CONFIG.RTMP_EXE);
 
 export function getPrograms() {
-  const programDataPath = path.join(projectRoot, CONFIG_DIR, PROGRAM_DATA);
-  const jsonData = fs.readFileSync(programDataPath, 'utf-8');
+  const programDataPath = path.join(projectRoot, CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
+  const jsonData = fs.readFileSync(programDataPath, CONST.ENCODE_TYPE);
   const programs = JSON.parse(jsonData);
 
   return programs;
@@ -42,7 +36,7 @@ function execJob(source, program) {
   const outFilePath = path.format({
     dir: downloadDirPath,
     name: outFilename,
-    ext: `.${DOWNLOAD_EXT}`,
+    ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
   const recTimeForSec = program.recTime * 60;
@@ -60,7 +54,7 @@ function setJob(source, program) {
 
   const job = new CronJob(cronTimeString, () => {
     execJob(source, program);
-  }, null, true, TIME_ZONE);
+  }, null, true, CONFIG.TIME_ZONE);
 
   console.log(`set rec: ${cronTimeString}`);
 

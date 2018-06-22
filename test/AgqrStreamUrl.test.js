@@ -2,19 +2,21 @@ import path from 'path';
 import fs from 'fs';
 
 import assert from 'power-assert';
-import { SERVER_INFO_URL, fetchXmlStr, xmlStrToJs, takeStreamUrl, fetchStreamUrl } from '../src/AgqrStreamUrl';
 
-const RTMP_PATTERN = /^rtmp:\/\/.*$/;
+import * as CONST from '../src/const';
+import * as CONFIG from '../config/config.json';
+import * as TEST_CONST from './const';
+import { fetchXmlStr, xmlStrToJs, takeStreamUrl, fetchStreamUrl } from '../src/AgqrStreamUrl';
 
-const DUMMY_DATA_DIR = path.join(path.resolve(''), 'test', 'dummy');
-const DUMMY_XML_PATH = path.join(DUMMY_DATA_DIR, 'agqrServerInfo.xml');
-const DUMMY_OBJ_PATH = path.join(DUMMY_DATA_DIR, 'agqrServerInfo.js');
+const DUMMY_DATA_DIR_PATH = path.join(path.resolve(''), CONST.TEST_DIR, TEST_CONST.DUMMY_DATA_DIR);
+const DUMMY_XML_PATH = path.join(DUMMY_DATA_DIR_PATH, 'agqrServerInfo.xml');
+const DUMMY_OBJ_PATH = path.join(DUMMY_DATA_DIR_PATH, 'agqrServerInfo.js');
 
 describe('AgqrStreamUrl', () => {
 
   describe('fetchXmlStr()', () => {
     it('URL から XML を文字列として取得できる', async () => {
-      const result = await fetchXmlStr(SERVER_INFO_URL);
+      const result = await fetchXmlStr(CONFIG.SERVER_INFO_URL);
       assert.strictEqual(typeof result, 'string');
     });
   });
@@ -45,16 +47,16 @@ describe('AgqrStreamUrl', () => {
       const result = takeStreamUrl(obj);
 
       assert.strictEqual(typeof result, 'string');
-      assert.ok(RTMP_PATTERN.test(result));
+      assert.ok(TEST_CONST.RTMP_PATTERN.test(result));
     });
   });
 
   describe('fetchStreamUrl()', () => {
     it('RTMP の URL が返ってくる', async () => {
-      const result = await fetchStreamUrl(SERVER_INFO_URL);
+      const result = await fetchStreamUrl(CONFIG.SERVER_INFO_URL);
 
       assert.strictEqual(typeof result, 'string');
-      assert.ok(RTMP_PATTERN.test(result));
+      assert.ok(TEST_CONST.RTMP_PATTERN.test(result));
     });
   });
 

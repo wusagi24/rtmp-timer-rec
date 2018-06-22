@@ -2,10 +2,12 @@ import path from 'path';
 
 import assert from 'power-assert';
 
-import { getPrograms, getRTMPSourcePath, CONFIG_DIR, PROGRAM_DATA } from '../src/index';
+import * as CONST from '../src/const';
+import * as TEST_CONST from './const';
+import { getPrograms, getRTMPSourcePath } from '../src/index';
 
 describe('index', () => {
-  const programsJsonPath = path.join(path.resolve(''), CONFIG_DIR, PROGRAM_DATA);
+  const programsJsonPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
 
   describe('getPrograms()', () => {
     let programs = null;
@@ -23,10 +25,9 @@ describe('index', () => {
   describe('getRTMPSourcePath()', () => {
     it('RTMP の URL を取得できる', async () => {
       const result = await getRTMPSourcePath();
-      const RTMP_PATTERN = /^rtmp:\/\/.*$/;
 
       assert.strictEqual(typeof result, 'string');
-      assert.ok(RTMP_PATTERN.test(result));
+      assert.ok(TEST_CONST.RTMP_PATTERN.test(result));
     });
   });
 });
