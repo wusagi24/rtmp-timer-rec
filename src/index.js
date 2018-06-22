@@ -9,9 +9,9 @@ import AgqrStreamUrl from './AgqrStreamUrl';
 
 const TIME_ZONE = 'Asia/Tokyo';
 const DOWNLOAD_EXT = 'flv';
-const CONFIG_DIR = 'config';
+export const CONFIG_DIR = 'config';
 const LIBS_DIR = 'libs';
-const PROGRAM_DATA = 'programs.json';
+export const PROGRAM_DATA = 'programs.json';
 const RTMP_EXE = 'rtmpdump';
 const DOWNLOAD_DIR = 'downloads';
 
@@ -20,7 +20,7 @@ const libsDirPath = path.join(projectRoot, LIBS_DIR);
 const downloadDirPath = path.join(projectRoot, DOWNLOAD_DIR);
 const rtmpdumpExePath = path.join(libsDirPath, RTMP_EXE);
 
-function getPrograms() {
+export function getPrograms() {
   const programDataPath = path.join(projectRoot, CONFIG_DIR, PROGRAM_DATA);
   const jsonData = fs.readFileSync(programDataPath, 'utf-8');
   const programs = JSON.parse(jsonData);
@@ -28,7 +28,7 @@ function getPrograms() {
   return programs;
 }
 
-async function getRTMPSourcePath() {
+export async function getRTMPSourcePath() {
   const agqrStreamUrl = AgqrStreamUrl();
   const url = await agqrStreamUrl.get();
 
