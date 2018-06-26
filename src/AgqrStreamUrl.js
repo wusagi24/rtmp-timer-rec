@@ -36,7 +36,7 @@ function AgqrStreamUrl() {
   return {
     get: async (force = false) => {
       if (force || !urlCache) {
-        urlCache = await fetchStreamUrl(CONFIG.SERVER_INFO_URL);
+        urlCache = await fetchStreamUrl(CONFIG.AGQR_SERVER_INFO_URL);
       }
       return urlCache;
     },

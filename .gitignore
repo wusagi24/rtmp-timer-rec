@@ -66,9 +66,9 @@ typings/
 # download folder
 /downloads/*
 
-# program data
-/config/programs.json
-/config/temp-programs.jsonc
+# schedules data
+/config/schedules.json
+/config/temp-schedules.jsonc
 
 # build script
 /dist

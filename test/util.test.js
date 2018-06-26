@@ -14,7 +14,7 @@ const DUMMY_OBJ_PATH = path.join(DUMMY_DATA_DIR_PATH, 'agqrServerInfo.js');
 
 describe('Util', () => {
   describe('loadLocalJsonData(path)', () => {
-    const jsonPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
+    const jsonPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
 
     let jsonData = {};
 
@@ -30,7 +30,7 @@ describe('Util', () => {
 
   describe('fetchXmlStr()', () => {
     it('URL から XML を文字列として取得できる', async () => {
-      const result = await fetchXmlStr(CONFIG.SERVER_INFO_URL);
+      const result = await fetchXmlStr(CONFIG.AGQR_SERVER_INFO_URL);
       assert.strictEqual(typeof result, 'string');
     });
   });

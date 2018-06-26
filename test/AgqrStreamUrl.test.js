@@ -28,7 +28,7 @@ describe('AgqrStreamUrl', () => {
 
   describe('fetchStreamUrl()', () => {
     it('RTMP の URL が返ってくる', async () => {
-      const result = await fetchStreamUrl(CONFIG.SERVER_INFO_URL);
+      const result = await fetchStreamUrl(CONFIG.AGQR_SERVER_INFO_URL);
 
       assert.strictEqual(typeof result, 'string');
       assert.ok(TEST_CONST.RTMP_PATTERN.test(result));

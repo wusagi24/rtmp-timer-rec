@@ -14,11 +14,11 @@ const libsDirPath = path.join(projectRoot, CONST.LIBS_DIR);
 const downloadDirPath = path.join(projectRoot, CONST.DOWNLOAD_DIR);
 const rtmpdumpExePath = path.join(libsDirPath, CONFIG.RTMP_EXE);
 
-export async function getPrograms() {
-  const programDataPath = path.join(projectRoot, CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
-  const programs = await loadLocalJsonData(programDataPath);
+export async function getSchedules() {
+  const schedulesDataPath = path.join(projectRoot, CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
+  const schedules = await loadLocalJsonData(schedulesDataPath);
 
-  return programs;
+  return schedules;
 }
 
 export async function getRTMPSourcePath() {
@@ -28,17 +28,17 @@ export async function getRTMPSourcePath() {
   return url;
 }
 
-function execJob(source, program) {
+function execJob(source, schedule) {
   console.log(`cron running now!: ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
 
-  const outFilename = `${program.title}_${moment().format('YYYYMMDD')}`;
+  const outFilename = `${schedule.title}_${moment().format('YYYYMMDD')}`;
   const outFilePath = path.format({
     dir: downloadDirPath,
     name: outFilename,
     ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
-  const recTimeForSec = program.recTime * 60;
+  const recTimeForSec = schedule.recTime * 60;
   const execCmd = `${rtmpdumpExePath} --rtmp ${source} -v R -e -o "${outFilePath}" -B ${recTimeForSec}`;
   console.log(execCmd);
 
@@ -48,11 +48,11 @@ function execJob(source, program) {
   });
 }
 
-function setJob(source, program) {
-  const cronTimeString = `${program.startTime.seconds} ${program.startTime.minutes} ${program.startTime.hours} ${program.startTime.date} ${program.startTime.month} ${program.startTime.dayOfWeek}`;
+function setJob(source, schedule) {
+  const cronTimeString = `${schedule.startTime.seconds} ${schedule.startTime.minutes} ${schedule.startTime.hours} ${schedule.startTime.date} ${schedule.startTime.month} ${schedule.startTime.dayOfWeek}`;
 
   const job = new CronJob(cronTimeString, () => {
-    execJob(source, program);
+    execJob(source, schedule);
   }, null, true, CONFIG.TIME_ZONE);
 
   console.log(`set rec: ${cronTimeString}`);
@@ -61,8 +61,8 @@ function setJob(source, program) {
 }
 
 (async () => {
-  const programs = await getPrograms();
+  const schedules = await getSchedules();
   const sourceUrl = await getRTMPSourcePath();
 
-  const jobs = programs.map(program => setJob(sourceUrl, program), []);
+  const jobs = schedules.map(schedule => setJob(sourceUrl, schedule), []);
 })();

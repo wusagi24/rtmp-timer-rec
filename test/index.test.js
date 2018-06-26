@@ -4,16 +4,16 @@ import assert from 'power-assert';
 
 import * as CONST from '../src/const';
 import * as TEST_CONST from './const';
-import { getPrograms, getRTMPSourcePath } from '../src/index';
+import { getSchedules, getRTMPSourcePath } from '../src/index';
 
 describe('index', () => {
-  const programsJsonPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.PROGRAM_DATA);
+  const schedulesJsonPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
 
-  describe('getPrograms()', () => {
-    let programs = null;
+  describe('getSchedules()', () => {
+    let schedules = null;
 
     before(() => {
-      programs = require(programsJsonPath);
+      schedules = require(schedulesJsonPath);
     });
 
     it('録音スケジュールファイルを正しく読み込めている');
