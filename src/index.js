@@ -12,7 +12,7 @@ import AgqrStreamUrl from './AgqrStreamUrl';
 const projectRoot = path.resolve('');
 const libsDirPath = path.join(projectRoot, CONST.LIBS_DIR);
 const downloadDirPath = path.join(projectRoot, CONST.DOWNLOAD_DIR);
-const rtmpdumpExePath = path.join(libsDirPath, CONFIG.RTMP_EXE);
+const rtmpdumpExePath = path.join(libsDirPath, CONST.RTMP_EXE);
 
 export async function getSchedules() {
   const schedulesDataPath = path.join(projectRoot, CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
@@ -53,7 +53,7 @@ function setJob(source, schedule) {
 
   const job = new CronJob(cronTimeString, () => {
     execJob(source, schedule);
-  }, null, true, CONFIG.TIME_ZONE);
+  }, null, true, CONST.TIME_ZONE);
 
   console.log(`set rec: ${cronTimeString}`);
 

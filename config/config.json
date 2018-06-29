@@ -1,6 +1,4 @@
 {
-  "TIME_ZONE": "Asia/Tokyo",
   "DOWNLOAD_EXT": "flv",
-  "RTMP_EXE": "rtmpdump",
   "AGQR_SERVER_INFO_URL": "http://www.uniqueradio.jp/agplayerf/getfmsListHD.php"
 }
