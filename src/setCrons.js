@@ -12,7 +12,8 @@ import * as CONFIG from '../config/config.json';
 /**
  * @typedef {Object} Schedule
  * @property {string} title
- * @property {string} source
+ * @property {number} sourceType
+ * @property {string} [url]
  * @property {number} recTime
  * @property {Object} startTime
  * @property {number|string} startTime.dayOfWeek
@@ -70,14 +71,35 @@ function setJob(source, schedule) {
 }
 
 /**
+ * @return {function(number, ?string): Promise<string>}
+ */
+function initGetSourceUrl() {
+  const agqrStreamUrl = AgqrStreamUrl();
+
+  return async (sourceType, url = '') => {
+    switch (CONST.SOURCE_TYPE[sourceType]) {
+      case CONST.SOURCE_TYPE_URL: {
+        return url;
+      }
+      case CONST.SOURCE_TYPE_AGQR: {
+        return await agqrStreamUrl.get();
+      }
+      default: {
+        return url;
+      }
+    }
+  };
+}
+
+/**
  * @param {Schedule[]} schedules
  * @return {CronJob[]}
  */
 export async function setCrons(schedules) {
-  const agqrStreamUrl = await AgqrStreamUrl().get();
+  const getSourceUrl = initGetSourceUrl();
 
   const jobs = schedules.map(async (schedule) => {
-    const sourceUrl = (schedule.source === CONST.AGQR_SOURCE_SETTING) ? agqrStreamUrl : schedule.source;
+    const sourceUrl = await getSourceUrl(schedule.sourceType, (schedule.url) ? schedule.url : null);
     return setJob(sourceUrl, schedule);
   }, []);
 

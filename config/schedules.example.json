@@ -1,7 +1,8 @@
 [
   {
     "title": "test1",
-    "source": "agqr",
+    "sourceType": 0,
+    "url": "rtmp://fms-base1.mitene.ad.jp/agqr/aandg1",
     "recTime": 1,
     "startTime": {
       "dayOfWeek": 3,
@@ -14,7 +15,7 @@
   },
   {
     "title": "test2",
-    "source": "rtmp://fms-base1.mitene.ad.jp/agqr/aandg1",
+    "sourceType": 1,
     "recTime": 1,
     "startTime": {
       "dayOfWeek": 2,

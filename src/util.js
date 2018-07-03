@@ -9,7 +9,8 @@ import * as CONST from './const';
 /**
  * @typedef {Object} Schedule
  * @property {string} title
- * @property {string} source
+ * @property {number} sourceType
+ * @property {string} [url]
  * @property {number} recTime
  * @property {Object} startTime
  * @property {number|string} startTime.dayOfWeek

@@ -28,7 +28,7 @@ export async function fetchStreamUrl(xmlUrl) {
 }
 
 /**
- * @return {{get: Function, clear: Function}}
+ * @return {{get: function(?boolean): string, clear: function(): void}}
  */
 function AgqrStreamUrl() {
   let urlCache = null;
