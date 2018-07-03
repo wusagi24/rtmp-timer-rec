@@ -24,6 +24,7 @@ module.exports = {
     ],
     "no-console": "warn",
     "no-unused-vars": "warn",
+    "indent": ["error", 2, { "SwitchCase": 1 }]
   },
   "parserOptions": {
     "sourceType": "module",
