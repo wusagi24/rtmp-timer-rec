@@ -1,6 +1,5 @@
-import path from 'path';
-
 import assert from 'power-assert';
+import path from 'path';
 
 import * as CONST from '../src/const';
 import * as TEST_CONST from './const';

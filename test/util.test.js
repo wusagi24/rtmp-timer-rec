@@ -1,7 +1,6 @@
-import path from 'path';
-import fs from 'fs';
-
 import assert from 'power-assert';
+import fs from 'fs';
+import path from 'path';
 
 import * as CONST from '../src/const';
 import * as CONFIG from '../config/config.json';
