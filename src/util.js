@@ -1,9 +1,24 @@
 import fs from 'fs';
+import path from 'path';
 
 import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const';
+
+/**
+ * @typedef {Object} Schedule
+ * @property {string} title
+ * @property {string} source
+ * @property {number} recTime
+ * @property {Object} startTime
+ * @property {number|string} startTime.dayOfWeek
+ * @property {number|string} startTime.month
+ * @property {number|string} startTime.date
+ * @property {number|string} startTime.hours
+ * @property {number|string} startTime.minutes
+ * @property {number|string} startTime.seconds
+ */
 
 /**
  * ローカルの json データをオブジェクトの形で都度読み込む（キャッシュしない）
@@ -20,6 +35,18 @@ export function loadLocalJsonData(path) {
       return resolve(obj);
     });
   });
+}
+
+/**
+ * Cron のスケジュールデータを取得する
+ *
+ * @return {Schedule[]}
+ */
+export async function getSchedules() {
+  const schedulesDataPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
+  const schedules = await loadLocalJsonData(schedulesDataPath);
+
+  return schedules;
 }
 
 /**

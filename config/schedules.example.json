@@ -1,25 +1,27 @@
 [
   {
     "title": "test1",
+    "source": "agqr",
     "recTime": 1,
     "startTime": {
       "dayOfWeek": 3,
       "month": "*",
       "date": "*",
-      "hours": 14,
-      "minutes": 2,
+      "hours": 0,
+      "minutes": 13,
       "seconds": 0
     }
   },
   {
     "title": "test2",
+    "source": "rtmp://fms-base1.mitene.ad.jp/agqr/aandg1",
     "recTime": 1,
     "startTime": {
-      "dayOfWeek": 4,
+      "dayOfWeek": 2,
       "month": "*",
       "date": "*",
-      "hours": 1,
-      "minutes": 10,
+      "hours": 14,
+      "minutes": 17,
       "seconds": 0
     }
   }

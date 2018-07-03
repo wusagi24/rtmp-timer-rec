@@ -7,12 +7,15 @@ const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
 const rtmpdumpExePath = path.join(libsDirPath, CONST.RTMP_EXE);
 
 /**
- * @param {?Object<string, string|null>} cmd_args コマンド引数
- * @return {Object} ChildProcess
+ * RTMPDump の js ラッパー
+ *
+ * @param {?Object<string, string|null>} cmdArgs コマンド引数
+ * @return {ChildProcess} ChildProcess
  */
-export function rtmpdump(cmd_args = {}) {
-  const args_list = Object.entries(cmd_args).reduce((args, arg) => args.concat(arg), []);
-  const rd = spawn(rtmpdumpExePath, args_list);
+export function rtmpdump(cmdArgs = {}) {
+  /* eslint-disable no-console */
+  const argsList = Object.entries(cmdArgs).reduce((args, arg) => args.concat(arg), []);
+  const rd = spawn(rtmpdumpExePath, argsList, { shell: true });
 
   rd.stdout.on('data', (data) => {
     console.log(`${data}`);
@@ -27,6 +30,7 @@ export function rtmpdump(cmd_args = {}) {
   });
 
   return rd;
+  /* eslint-enable no-console */
 }
 
 export default rtmpdump;
