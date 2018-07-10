@@ -67,16 +67,61 @@ function execJob(source, startTime, recTime, title) {
  * @return {CronJob}
  */
 function setJob(source, schedule) {
-  const cronTimeString = `${schedule.startTime.seconds} ${schedule.startTime.minutes} ${schedule.startTime.hours} ${schedule.startTime.date} ${schedule.startTime.month} ${schedule.startTime.dayOfWeek}`;
+  // TODO: startTime の計算を外に出す
+  const { dayOfWeek, month, date, hours, minutes, seconds } = ((start) => {
+    const ONE_DAY_HOURS = 24;
+    const ONE_WEEK_DAYS = 7;
+
+    if (start.hours >= ONE_DAY_HOURS) {
+      const overDays = Math.floor(start.hours / ONE_DAY_HOURS);
+      const hours = start.hours % ONE_DAY_HOURS;
+
+      const dayOfWeek = (Number.isInteger(start.dayOfWeek)) ?
+        (start.dayOfWeek + overDays) % ONE_WEEK_DAYS :
+        start.dayOfWeek;
+
+      const { month, date } = ((sMonth, sDate) => {
+        if (Number.isInteger(sDate)) {
+          const now = moment();
+          // date が指定されているときは、必ず month も指定されているという前提
+          const d = (sMonth > now.month()) ?
+            now.month(sMonth).add(overDays, 'days') :
+            now.add(1, 'years').month(sMonth).add(overDays, 'days');
+
+          return { month: d.month(), date: d.date() };
+        }
+
+        return { month: sMonth, date: sDate };
+      })(start.month, start.date);
+
+      return {
+        dayOfWeek,
+        month,
+        date,
+        hours,
+        minutes: start.minutes,
+        seconds: start.seconds,
+      };
+    }
+
+    return start;
+  })(schedule.startTime);
+
+  const cronTimeString = `${seconds} ${minutes} ${hours} ${date} ${month} ${dayOfWeek}`;
 
   const recTime = schedule.recTime * 60;
   const title = (schedule.title) ? schedule.title : CONST.DEFAULT_TITLE;
 
-  const job = new CronJob(cronTimeString, () => {
-    execJob(source, schedule.startTime, recTime, title);
-  }, null, true, CONST.TIME_ZONE);
+  const job = new CronJob({
+    cronTime: cronTimeString,
+    onTick: () => {
+      execJob(source, schedule.startTime, recTime, title);
+    },
+    start: true,
+    timeZone: CONST.TIME_ZONE,
+  });
 
-  console.log(`set rec: ${cronTimeString} ${source}`);
+  console.log(`set rec: ${title} ${cronTimeString} ${source}`);
 
   return job;
 }
