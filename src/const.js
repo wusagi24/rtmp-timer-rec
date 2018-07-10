@@ -9,6 +9,7 @@ export const TIME_ZONE = 'Asia/Tokyo';
 export const RTMP_EXE = 'rtmpdump.exe';
 
 // setCrons
+export const DEFAULT_TITLE = 'dump';
 export const SOURCE_TYPE_URL = 'url';
 export const SOURCE_TYPE_AGQR = 'agqr';
 
