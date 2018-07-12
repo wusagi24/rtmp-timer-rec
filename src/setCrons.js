@@ -10,19 +10,26 @@ import * as CONST from './const';
 import * as CONFIG from '../config/config.json';
 
 /**
+* @typedef {object} CronTime
+* @property {number|string} startTime.dayOfWeek
+* @property {number|string} startTime.month
+* @property {number|string} startTime.date
+* @property {number|string} startTime.hours
+* @property {number|string} startTime.minutes
+* @property {number|string} startTime.seconds
+ */
+
+/**
  * @typedef {object} Schedule
  * @property {string} title
  * @property {number} sourceType
  * @property {string} [url]
  * @property {number} recTime
- * @property {object} startTime
- * @property {number|string} startTime.dayOfWeek
- * @property {number|string} startTime.month
- * @property {number|string} startTime.date
- * @property {number|string} startTime.hours
- * @property {number|string} startTime.minutes
- * @property {number|string} startTime.seconds
+ * @property {CronTime} startTime
  */
+
+const ONE_DAY_HOURS = 24;
+const ONE_WEEK_DAYS = 7;
 
 const downloadDirPath = path.join(path.resolve(''), CONST.DOWNLOAD_DIR);
 
@@ -30,7 +37,7 @@ const downloadDirPath = path.join(path.resolve(''), CONST.DOWNLOAD_DIR);
  * Cron で実行されるジョブ
  *
  * @param {string} source RTMP の配信元 URL 文字列
- * @param {Schedule.startTime} startTime 録音開始タイミング
+ * @param {CronTime} startTime 録音開始タイミング
  * @param {number} recTime 録音する長さ（sec）
  * @param {string} title ファイルのタイトル
  */
@@ -60,6 +67,55 @@ function execJob(source, startTime, recTime, title) {
 }
 
 /**
+ * 時間指定を cron に渡せる形に再計算
+ *
+ * @param {CronTime} cronTime 時間指定
+ * @return {CronTime} 再計算した時間指定
+ */
+function calcCronTime(cronTime) {
+  if (cronTime.hours < ONE_DAY_HOURS) {
+    return cronTime;
+  }
+
+  const overDays = Math.floor(cronTime.hours / ONE_DAY_HOURS);
+
+  const hours = cronTime.hours % ONE_DAY_HOURS;
+
+  const dayOfWeek = (Number.isInteger(cronTime.dayOfWeek)) ?
+    (cronTime.dayOfWeek + overDays) % ONE_WEEK_DAYS :
+    cronTime.dayOfWeek;
+
+  const { month, date } = ((sMonth, sDate) => {
+    if (!Number.isInteger(sDate)) {
+      return {
+        month: sMonth,
+        date: sDate,
+      };
+    }
+
+    // 以下 date が指定されているときは、必ず month も指定されているという前提
+    const now = moment();
+    const d = (sMonth > now.month()) ?
+      now.month(sMonth).add(overDays, 'days') :
+      now.add(1, 'years').month(sMonth).add(overDays, 'days');
+
+    return {
+      month: d.month(),
+      date: d.date(),
+    };
+  })(cronTime.month, cronTime.date);
+
+  return {
+    dayOfWeek,
+    month,
+    date,
+    hours,
+    minutes: cronTime.minutes,
+    seconds: cronTime.seconds,
+  };
+}
+
+/**
  * 指定時間にジョブをセットする
  *
  * @param {string} source RTMP の配信元 URL 文字列
@@ -67,46 +123,7 @@ function execJob(source, startTime, recTime, title) {
  * @return {CronJob}
  */
 function setJob(source, schedule) {
-  // TODO: startTime の計算を外に出す
-  const { dayOfWeek, month, date, hours, minutes, seconds } = ((start) => {
-    const ONE_DAY_HOURS = 24;
-    const ONE_WEEK_DAYS = 7;
-
-    if (start.hours >= ONE_DAY_HOURS) {
-      const overDays = Math.floor(start.hours / ONE_DAY_HOURS);
-      const hours = start.hours % ONE_DAY_HOURS;
-
-      const dayOfWeek = (Number.isInteger(start.dayOfWeek)) ?
-        (start.dayOfWeek + overDays) % ONE_WEEK_DAYS :
-        start.dayOfWeek;
-
-      const { month, date } = ((sMonth, sDate) => {
-        if (Number.isInteger(sDate)) {
-          const now = moment();
-          // date が指定されているときは、必ず month も指定されているという前提
-          const d = (sMonth > now.month()) ?
-            now.month(sMonth).add(overDays, 'days') :
-            now.add(1, 'years').month(sMonth).add(overDays, 'days');
-
-          return { month: d.month(), date: d.date() };
-        }
-
-        return { month: sMonth, date: sDate };
-      })(start.month, start.date);
-
-      return {
-        dayOfWeek,
-        month,
-        date,
-        hours,
-        minutes: start.minutes,
-        seconds: start.seconds,
-      };
-    }
-
-    return start;
-  })(schedule.startTime);
-
+  const { dayOfWeek, month, date, hours, minutes, seconds } = calcCronTime(schedule.startTime);
   const cronTimeString = `${seconds} ${minutes} ${hours} ${date} ${month} ${dayOfWeek}`;
 
   const recTime = schedule.recTime * 60;
