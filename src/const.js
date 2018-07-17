@@ -17,3 +17,6 @@ export const SOURCE_TYPE = [
   SOURCE_TYPE_URL,
   SOURCE_TYPE_AGQR,
 ];
+
+// cron
+export const WILDCARD_CHAR = '*';

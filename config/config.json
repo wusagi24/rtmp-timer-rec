@@ -1,4 +1,5 @@
 {
   "DOWNLOAD_EXT": "flv",
-  "AGQR_SERVER_INFO_URL": "http://www.uniqueradio.jp/agplayerf/getfmsListHD.php"
+  "AGQR_SERVER_INFO_URL": "http://www.uniqueradio.jp/agplayerf/getfmsListHD.php",
+  "REC_START_BUFFER": 60
 }

@@ -28,9 +28,6 @@ import * as CONFIG from '../config/config.json';
  * @property {CronTime} startTime
  */
 
-const ONE_DAY_HOURS = 24;
-const ONE_WEEK_DAYS = 7;
-
 const downloadDirPath = path.join(path.resolve(''), CONST.DOWNLOAD_DIR);
 
 /**
@@ -67,52 +64,88 @@ function execJob(source, startTime, recTime, title) {
 }
 
 /**
- * 時間指定を cron に渡せる形に再計算
+ * CronTime オブジェクトから moment オブジェクトを生成する
  *
- * @param {CronTime} cronTime 時間指定
- * @return {CronTime} 再計算した時間指定
+ * @param {CronTime} cronTime
+ * @return {moment.Moment}
  */
-function calcCronTime(cronTime) {
-  if (cronTime.hours < ONE_DAY_HOURS) {
-    return cronTime;
-  }
+function toMomentDate(cronTime) {
+  const date = (({ dayOfWeek, month, date }) => {
+    const now = moment();
 
-  const overDays = Math.floor(cronTime.hours / ONE_DAY_HOURS);
+    if (Number.isInteger(date)) {
+      const today = now.month(month).date(date);
 
-  const hours = cronTime.hours % ONE_DAY_HOURS;
+      if (today.isBefore(now)) {
+        return today.add(1, 'years');
+      }
+      return today;
+    } else if (Number.isInteger(dayOfWeek)) {
+      return now.day(dayOfWeek);
+    }
+    return now;
+  })(cronTime);
 
-  const dayOfWeek = (Number.isInteger(cronTime.dayOfWeek)) ?
-    (cronTime.dayOfWeek + overDays) % ONE_WEEK_DAYS :
-    cronTime.dayOfWeek;
+  const datetime = date
+    .hours(cronTime.hours)
+    .minutes(cronTime.minutes)
+    .seconds(cronTime.seconds);
 
-  const { month, date } = ((sMonth, sDate) => {
-    if (!Number.isInteger(sDate)) {
+  return datetime;
+}
+
+/**
+ * moment オブジェクトから CronTime オブジェクトを作り直す
+ *
+ * @param {moment.Moment} datetime
+ * @param {CronTime} cronTime
+ * @return {CronTime}
+ */
+function toCalcedCronTime(datetime, cronTime) {
+  const { dayOfWeek, month, date } = ((dt, ct) => {
+    if (Number.isInteger(ct.date)) {
       return {
-        month: sMonth,
-        date: sDate,
+        dayOfWeek: CONST.WILDCARD_CHAR,
+        month: dt.month(),
+        date: dt.date(),
+      };
+    } else if (Number.isInteger(ct.dayOfWeek)) {
+      return {
+        dayOfWeek: dt.day(),
+        month: CONST.WILDCARD_CHAR,
+        date: CONST.WILDCARD_CHAR,
       };
     }
-
-    // 以下 date が指定されているときは、必ず month も指定されているという前提
-    const now = moment();
-    const d = (sMonth > now.month()) ?
-      now.month(sMonth).add(overDays, 'days') :
-      now.add(1, 'years').month(sMonth).add(overDays, 'days');
-
     return {
-      month: d.month(),
-      date: d.date(),
+      dayOfWeek: CONST.WILDCARD_CHAR,
+      month: CONST.WILDCARD_CHAR,
+      date: CONST.WILDCARD_CHAR,
     };
-  })(cronTime.month, cronTime.date);
+  })(datetime, cronTime);
 
   return {
     dayOfWeek,
     month,
     date,
-    hours,
-    minutes: cronTime.minutes,
-    seconds: cronTime.seconds,
+    hours: datetime.hours(),
+    minutes: datetime.minutes(),
+    seconds: datetime.seconds(),
   };
+}
+
+/**
+ * 時間指定を cron に渡す形に再計算
+ *
+ * @param {CronTime} cronTime 時間指定
+ * @param {number} [bufTime=0] 実行タイミングに付加するバッファ時間 (sec)
+ * @return {CronTime} 再計算した時間指定
+ */
+function calcCronTime(cronTime, bufTime) {
+  const datetime = toMomentDate(cronTime);
+  const subBufDatetime = datetime.subtract(bufTime, 'seconds');
+  const caledCronTime = toCalcedCronTime(subBufDatetime, cronTime);
+
+  return caledCronTime;
 }
 
 /**
@@ -123,10 +156,10 @@ function calcCronTime(cronTime) {
  * @return {CronJob}
  */
 function setJob(source, schedule) {
-  const { dayOfWeek, month, date, hours, minutes, seconds } = calcCronTime(schedule.startTime);
+  const { dayOfWeek, month, date, hours, minutes, seconds } = calcCronTime(schedule.startTime, CONFIG.REC_START_BUFFER);
   const cronTimeString = `${seconds} ${minutes} ${hours} ${date} ${month} ${dayOfWeek}`;
 
-  const recTime = schedule.recTime * 60;
+  const recTime = (schedule.recTime * 60) + CONFIG.REC_START_BUFFER;
   const title = (schedule.title) ? schedule.title : CONST.DEFAULT_TITLE;
 
   const job = new CronJob({
