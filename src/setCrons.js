@@ -42,13 +42,12 @@ function execJob(source, startTime, recTime, title) {
   const now = moment();
   console.log(`cron running now!: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
 
-  const recDate = (startTime.hours >= 24) ?
-    now.subtract(1, 'days').hour(startTime.hours).minute(startTime.minutes) :
-    now.hour(startTime.hours).minute(startTime.minutes);
+  const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
+  const datetime = `${recMoment.format('YYYYMMDD')}${startTime.hours}${startTime.minutes}`;
 
   const output = path.format({
     dir: downloadDirPath,
-    name: `${title}_${recDate.format('YYYYMMDDHHmm')}`,
+    name: `${title}_${datetime}`,
     ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
