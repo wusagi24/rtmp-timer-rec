@@ -5,5 +5,12 @@
         "node": "current"
       }
     }]
-  ]
+  ],
+  "env": {
+    "development": {
+      "presets": [
+        "power-assert"
+      ]
+    }
+  }
 }
