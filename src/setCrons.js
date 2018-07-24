@@ -3,11 +3,13 @@ import path from 'path';
 import moment from 'moment';
 import { CronJob } from 'cron';
 
-import AgqrStreamUrl from './AgqrStreamUrl';
-import rtmpdump from './rtmpdump';
-
 import * as CONST from './const';
 import * as CONFIG from '../config/config.json';
+
+import AgqrStreamUrl from './AgqrStreamUrl';
+import rtmpdump from './rtmpdump';
+import { getSchedules } from './util';
+
 
 /**
 * @typedef {object} CronTime
@@ -42,8 +44,10 @@ function execJob(source, startTime, recTime, title) {
   const now = moment();
   console.log(`cron running now!: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
 
+  const hour = `0${startTime.hours}`.slice(-2);
+  const minute = `0${startTime.minutes}`.slice(-2);
   const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
-  const datetime = `${recMoment.format('YYYYMMDD')}${startTime.hours}${startTime.minutes}`;
+  const datetime = `${recMoment.format('YYYYMMDD')}${hour}${minute}`;
 
   const output = path.format({
     dir: downloadDirPath,
@@ -176,35 +180,32 @@ function setJob(source, schedule) {
 }
 
 /**
- * @return {function(number, ?string): Promise<string>}
+ * @return {function(string): Promise<string>}
  */
 function initGetSourceUrl() {
   const agqrStreamUrl = AgqrStreamUrl();
 
-  return async (sourceType, url = '') => {
-    switch (CONST.SOURCE_TYPE[sourceType]) {
-      case CONST.SOURCE_TYPE_URL: {
-        return url;
-      }
+  return async (source) => {
+    switch (source) {
       case CONST.SOURCE_TYPE_AGQR: {
         return await agqrStreamUrl.get();
       }
       default: {
-        return url;
+        return source;
       }
     }
   };
 }
 
 /**
- * @param {Schedule[]} schedules
  * @return {CronJob[]}
  */
-export async function setCrons(schedules) {
-  const getSourceUrl = initGetSourceUrl();
+export async function setCrons() {
+  const schedules = await getSchedules();
+  const getSourceUrl = await initGetSourceUrl();
 
   const jobs = schedules.map(async (schedule) => {
-    const sourceUrl = await getSourceUrl(schedule.sourceType, (schedule.url) ? schedule.url : null);
+    const sourceUrl = await getSourceUrl(schedule.source);
     return setJob(sourceUrl, schedule);
   }, []);
 
