@@ -1,28 +1,27 @@
 [
   {
     "title": "test1",
-    "sourceType": 0,
-    "url": "rtmp://fms-base1.mitene.ad.jp/agqr/aandg1",
-    "recTime": 1,
-    "startTime": {
-      "dayOfWeek": 3,
-      "month": "*",
-      "date": "*",
-      "hours": 0,
-      "minutes": 13,
-      "seconds": 0
-    }
-  },
-  {
-    "title": "test2",
-    "sourceType": 1,
+    "source": "rtmp://fms-base2.mitene.ad.jp/agqr/aandg1",
     "recTime": 1,
     "startTime": {
       "dayOfWeek": 2,
       "month": "*",
       "date": "*",
-      "hours": 14,
-      "minutes": 17,
+      "hours": 23,
+      "minutes": 46,
+      "seconds": 0
+    }
+  },
+  {
+    "title": "test2",
+    "source": "agqr",
+    "recTime": 1,
+    "startTime": {
+      "dayOfWeek": 2,
+      "month": "*",
+      "date": "*",
+      "hours": 23,
+      "minutes": 49,
       "seconds": 0
     }
   }
