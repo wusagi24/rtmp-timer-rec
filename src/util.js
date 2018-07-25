@@ -4,7 +4,7 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
-import * as CONST from './const';
+import * as CONST from './const/common';
 
 /**
  * @typedef {Object} Schedule

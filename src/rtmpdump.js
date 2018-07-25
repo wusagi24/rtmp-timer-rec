@@ -1,7 +1,7 @@
 import path from 'path';
 import { spawn } from 'child_process';
 
-import * as CONST from './const';
+import * as CONST from './const/common';
 
 const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
 const rtmpdumpExePath = path.join(libsDirPath, CONST.RTMP_EXE);

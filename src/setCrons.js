@@ -3,7 +3,8 @@ import path from 'path';
 import moment from 'moment';
 import { CronJob } from 'cron';
 
-import * as CONST from './const';
+import * as CONST from './const/common';
+import * as CONST_SETCRON from './const/setCron';
 import * as CONFIG from '../config/config.json';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
@@ -108,21 +109,21 @@ function toCalcedCronTime(datetime, cronTime) {
   const { dayOfWeek, month, date } = ((dt, ct) => {
     if (Number.isInteger(ct.date)) {
       return {
-        dayOfWeek: CONST.WILDCARD_CHAR,
+        dayOfWeek: CONST_SETCRON.WILDCARD_CHAR,
         month: dt.month(),
         date: dt.date(),
       };
     } else if (Number.isInteger(ct.dayOfWeek)) {
       return {
         dayOfWeek: dt.day(),
-        month: CONST.WILDCARD_CHAR,
-        date: CONST.WILDCARD_CHAR,
+        month: CONST_SETCRON.WILDCARD_CHAR,
+        date: CONST_SETCRON.WILDCARD_CHAR,
       };
     }
     return {
-      dayOfWeek: CONST.WILDCARD_CHAR,
-      month: CONST.WILDCARD_CHAR,
-      date: CONST.WILDCARD_CHAR,
+      dayOfWeek: CONST_SETCRON.WILDCARD_CHAR,
+      month: CONST_SETCRON.WILDCARD_CHAR,
+      date: CONST_SETCRON.WILDCARD_CHAR,
     };
   })(datetime, cronTime);
 
@@ -163,7 +164,7 @@ function setJob(source, schedule) {
   const cronTimeString = `${seconds} ${minutes} ${hours} ${date} ${month} ${dayOfWeek}`;
 
   const recTime = (schedule.recTime * 60) + CONFIG.REC_START_BUFFER;
-  const title = (schedule.title) ? schedule.title : CONST.DEFAULT_TITLE;
+  const title = (schedule.title) ? schedule.title : CONST_SETCRON.DEFAULT_TITLE;
 
   const job = new CronJob({
     cronTime: cronTimeString,
@@ -187,7 +188,7 @@ function initGetSourceUrl() {
 
   return async (source) => {
     switch (source) {
-      case CONST.SOURCE_TYPE_AGQR: {
+      case CONST_SETCRON.SOURCE_TYPE_AGQR: {
         return await agqrStreamUrl.get();
       }
       default: {

@@ -1,7 +1,7 @@
 import assert from 'power-assert';
 import path from 'path';
 
-import * as CONST from '../src/const';
+import * as CONST from '../src/const/common';
 import * as CONFIG from '../config/config.json';
 import * as TEST_CONST from './const';
 import { takeStreamUrl, fetchStreamUrl } from '../src/AgqrStreamUrl';
