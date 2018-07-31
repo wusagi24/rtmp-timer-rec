@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
+import * as ERROR_MSG from './const/text_error';
 
 /**
  * @typedef {Object} Schedule
@@ -36,6 +37,21 @@ export function loadLocalJsonData(path) {
       return resolve(obj);
     });
   });
+}
+
+/**
+ * スケジュールデータのバリデーション
+ *
+ * @param {Schedule} schedule
+ * @return {{ error: string[], schedule: Schedule }}
+ */
+export function validScheduleData(schedule) {
+  const err = null;
+
+  return {
+    error: err,
+    schedule,
+  };
 }
 
 /**
