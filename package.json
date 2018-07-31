@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "babel-node src/index.js",
-    "lint": "eslint src/**/*.js",
+    "lint": "eslint **/*.js",
     "test": "mocha --require babel-register test/**/*.test.js",
     "build": "babel src -d dist",
     "exec": "node dist/index.js"

@@ -1,4 +1,6 @@
-import assert from 'power-assert';
+'use strict';
+
+import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 

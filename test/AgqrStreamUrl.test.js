@@ -1,4 +1,6 @@
-import assert from 'power-assert';
+'use strict';
+
+import assert from 'assert';
 import path from 'path';
 
 import * as CONST from '../src/const/common';
