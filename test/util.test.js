@@ -71,7 +71,7 @@ describe('Util', () => {
 
         it('文字列でない場合、該当のエラーメッセージを返す。', () => {
           const numValTitle = { title: 0 };
-          assert.strictEqual(isTargetError(numValTitle, ), true);
+          assert.strictEqual(isTargetError(numValTitle, err), true);
 
           const boolValTitle = { title: true };
           assert.strictEqual(isTargetError(boolValTitle, err), true);
