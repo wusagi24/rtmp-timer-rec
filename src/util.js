@@ -44,15 +44,11 @@ export function loadLocalJsonData(path) {
  * スケジュールデータのバリデーション
  *
  * @param {Schedule} schedule
- * @return {{ error: string[], schedule: Schedule }}
+ * @return {string[]}
  */
-export function validScheduleData(schedule) {
-  const err = null;
-
-  return {
-    error: err,
-    schedule,
-  };
+export function validateSchedule(schedule) {
+  const error = null;
+  return error;
 }
 
 /**
