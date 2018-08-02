@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import * as CONST from '../src/const/common';
-import * as CONST_SETCRON from '../src/const/setCron';
+import * as CONST_SET_CRONS from '../src/const/setCrons';
 import * as ERROR_MSG from '../src/const/text_error';
 import * as CONFIG from '../config/config.json';
 import * as TEST_CONST from './const';
@@ -222,8 +222,8 @@ describe('Util', () => {
       describe('値の範囲チェック', () => {
         const lessErr = ERROR_MSG.SCHEDULE_RECTIME_MIN_LESS;
         const overErr = ERROR_MSG.SCHEDULE_RECTIME_MAX_OVER;
-        const minRecTime = CONST_SETCRON.RECTIME_RANGE_MIN;
-        const maxRecTime = CONST_SETCRON.RECTIME_RANGE_MAX;
+        const minRecTime = CONST_SET_CRONS.RECTIME_RANGE_MIN;
+        const maxRecTime = CONST_SET_CRONS.RECTIME_RANGE_MAX;
 
         it('既定値以内の場合、該当のエラーメッセージは返さない。', () => {
           const minValRecTime = { recTime: minRecTime };
@@ -324,7 +324,7 @@ describe('Util', () => {
 
         describe('値の内容チェック', () => {
           const err = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
-          const validStr = CONST_SETCRON.WILDCARD_CHAR;
+          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDayOfWeek = { startTime: { dayOfWeek: 1 } };
@@ -366,8 +366,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_MAX_OVER;
-          const minDayOfWeek = CONST_SETCRON.STARTTIME_DAYOFWEEK_RANGE_MIN;
-          const maxDayOfWeek = CONST_SETCRON.STARTTIME_DAYOFWEEK_RANGE_MAX;
+          const minDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MIN;
+          const maxDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValDayOfWeek = { startTime: { dayOfWeek: minDayOfWeek } };
@@ -481,7 +481,7 @@ describe('Util', () => {
 
         describe('値の内容チェック', () => {
           const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
-          const validStr = CONST_SETCRON.WILDCARD_CHAR;
+          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('整数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValMonth = { startTime: { month: 1 } };
@@ -523,8 +523,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_MAX_OVER;
-          const minMonth = CONST_SETCRON.STARTTIME_MONTH_RANGE_MIN;
-          const maxMonth = CONST_SETCRON.STARTTIME_MONTH_RANGE_MAX;
+          const minMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MIN;
+          const maxMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValMonth = { startTime: { month: minMonth } };
@@ -638,7 +638,7 @@ describe('Util', () => {
 
         describe('値の内容チェック', () => {
           const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
-          const validStr = CONST_SETCRON.WILDCARD_CHAR;
+          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDate = { startTime: { date: 1 } };
@@ -680,8 +680,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_DATE_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_DATE_MAX_OVER;
-          const minDate = CONST_SETCRON.STARTTIME_DATE_RANGE_MIN;
-          const maxDate = CONST_SETCRON.STARTTIME_DATE_RANGE_MAX;
+          const minDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MIN;
+          const maxDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValDate = { startTime: { date: minDate } };
@@ -791,8 +791,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_MAX_OVER;
-          const minHours = CONST_SETCRON.STARTTIME_HOURS_RANGE_MIN;
-          const maxHours = CONST_SETCRON.STARTTIME_HOURS_RANGE_MAX;
+          const minHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MIN;
+          const maxHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValHours = { startTime: { hours: minHours } };
@@ -902,8 +902,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_MAX_OVER;
-          const minMinutes = CONST_SETCRON.STARTTIME_MINUTES_RANGE_MIN;
-          const maxMinutes = CONST_SETCRON.STARTTIME_MINUTES_RANGE_MAX;
+          const minMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MIN;
+          const maxMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValMinutes = { startTime: { minutes: minMinutes } };
@@ -1014,8 +1014,8 @@ describe('Util', () => {
         describe('値の範囲チェック', () => {
           const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_MIN_LESS;
           const overErr = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_MAX_OVER;
-          const minSeconds = CONST_SETCRON.STARTTIME_SECONDS_RANGE_MIN;
-          const maxSeconds = CONST_SETCRON.STARTTIME_SECONDS_RANGE_MAX;
+          const minSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MIN;
+          const maxSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MAX;
 
           it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
             const minValSeconds = { startTime: { seconds: minSeconds } };
