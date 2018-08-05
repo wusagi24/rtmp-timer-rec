@@ -6,7 +6,7 @@ import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
 import * as CONST_SET_CRONS from './const/setCrons';
-import * as ERROR_MSG from './const/text_error';
+import * as ERROR from './const/error';
 
 /**
  * @typedef {Object} Schedule

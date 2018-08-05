@@ -6,7 +6,7 @@ import path from 'path';
 
 import * as CONST from '../src/const/common';
 import * as CONST_SET_CRONS from '../src/const/setCrons';
-import * as ERROR_MSG from '../src/const/text_error';
+import * as ERROR from '../src/const/error';
 import * as CONFIG from '../config/config.json';
 import * as TEST_CONST from './const';
 import { loadLocalJsonData, validateSchedule, fetchXmlStr, parseXml } from '../src/util';
@@ -44,7 +44,7 @@ describe('Util', () => {
 
     describe('schedule.title のチェック', () => {
       describe('項目の存在チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_TITLE_NOT_EXIST;
+        const err = ERROR.SCHEDULE_TITLE_NOT_EXIST;
 
         it('存在する場合、該当のエラーメッセージは返さない。', () => {
           const existTitle = { title: 'hoge' };
@@ -58,7 +58,7 @@ describe('Util', () => {
       });
 
       describe('値の型チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_TITLE_INVALID_TYPE;
+        const err = ERROR.SCHEDULE_TITLE_INVALID_TYPE;
 
         it('文字列の場合、該当のエラーメッセージは返さない。', () => {
           const strValTitle = { title: 'hoge' };
@@ -89,7 +89,7 @@ describe('Util', () => {
 
     describe('schedule.source のチェック', () => {
       describe('項目の存在チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_SOURCE_NOT_EXIST;
+        const err = ERROR.SCHEDULE_SOURCE_NOT_EXIST;
 
         it('存在する場合、該当のエラーメッセージは返さない。', () => {
           const existSource = { source: 'hoge' };
@@ -103,7 +103,7 @@ describe('Util', () => {
       });
 
       describe('値の形式チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_SOURCE_INVALID_TYPE;
+        const err = ERROR.SCHEDULE_SOURCE_INVALID_TYPE;
 
         it('文字列の場合、該当のエラーメッセージは返さない。', () => {
           const strValSource = { source: 'hoge' };
@@ -132,7 +132,7 @@ describe('Util', () => {
       });
 
       describe('値の内容チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_SOURCE_INVALID_VAL;
+        const err = ERROR.SCHEDULE_SOURCE_INVALID_VAL;
 
         it('rtmp url 文字列の場合、該当のエラーメッセージは返さない。', () => {
           const urlStrValSource = 'rtmp://example.com/hoge/fugo';
@@ -155,7 +155,7 @@ describe('Util', () => {
 
     describe('schedule.recTime のチェック', () => {
       describe('項目の存在チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_RECTIME_NOT_EXIST;
+        const err = ERROR.SCHEDULE_RECTIME_NOT_EXIST;
 
         it('存在する場合、該当のエラーメッセージは返さない。', () => {
           const existRecTime = { recTime: 1 };
@@ -169,7 +169,7 @@ describe('Util', () => {
       });
 
       describe('値の形式チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_RECTIME_INVALID_VAL;
+        const err = ERROR.SCHEDULE_RECTIME_INVALID_VAL;
 
         it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
           const plusIntValRecTime = { recTime: 1 };
@@ -219,8 +219,8 @@ describe('Util', () => {
       });
 
       describe('値の範囲チェック', () => {
-        const lessErr = ERROR_MSG.SCHEDULE_RECTIME_MIN_LESS;
-        const overErr = ERROR_MSG.SCHEDULE_RECTIME_MAX_OVER;
+        const lessErr = ERROR.SCHEDULE_RECTIME_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_RECTIME_MAX_OVER;
         const minRecTime = CONST_SET_CRONS.RECTIME_RANGE_MIN;
         const maxRecTime = CONST_SET_CRONS.RECTIME_RANGE_MAX;
 
@@ -266,7 +266,7 @@ describe('Util', () => {
 
     describe('schedule.startTime のチェック', () => {
       describe('項目の存在チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_STARTTIME_NOT_EXIST;
+        const err = ERROR.SCHEDULE_STARTTIME_NOT_EXIST;
 
         it('存在する場合、該当のエラーメッセージは返さない。', () => {
           const existStartTime = { startTime: {} };
@@ -281,7 +281,7 @@ describe('Util', () => {
 
       describe('dayOfWeek のチェック', () => {
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE;
+          const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDayOfWeek = { startTime: { dayOfWeek: 1 } };
@@ -322,7 +322,7 @@ describe('Util', () => {
         });
 
         describe('値の内容チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
           const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
@@ -363,8 +363,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MAX_OVER;
           const minDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MIN;
           const maxDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MAX;
 
@@ -410,7 +410,7 @@ describe('Util', () => {
 
       describe('month のチェック', () => {
         describe('項目の存在チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_NOT_EXIST;
+          const err = ERROR.SCHEDULE_STARTTIME_MONTH_NOT_EXIST;
 
           it('date が存在していて且つ month が存在する場合は、該当のエラーメッセージは返さない。', () => {
             const existDateAndMonth = {
@@ -440,7 +440,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE;
+          const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValMonth = { startTime: { month: 1 } };
@@ -481,7 +481,7 @@ describe('Util', () => {
         });
 
         describe('値の内容チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
           const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('整数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
@@ -522,8 +522,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_MONTH_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_MONTH_MAX_OVER;
           const minMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MIN;
           const maxMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MAX;
 
@@ -569,7 +569,7 @@ describe('Util', () => {
 
       describe('date のチェック', () => {
         describe('項目の存在チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_NOT_EXIST;
+          const err = ERROR.SCHEDULE_STARTTIME_DATE_NOT_EXIST;
 
           it('month が存在していて且つ date が存在する場合は、該当のエラーメッセージは返さない。', () => {
             const existDateAndMonth = {
@@ -599,7 +599,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_INVALID_TYPE;
+          const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDate = { startTime: { date: 1 } };
@@ -640,7 +640,7 @@ describe('Util', () => {
         });
 
         describe('値の内容チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
           const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
 
           it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
@@ -681,8 +681,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_DATE_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_DATE_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_DATE_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_DATE_MAX_OVER;
           const minDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MIN;
           const maxDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MAX;
 
@@ -728,7 +728,7 @@ describe('Util', () => {
 
       describe('hours のチェック', () => {
         describe('項目の存在チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_NOT_EXIST;
+          const err = ERROR.SCHEDULE_STARTTIME_HOURS_NOT_EXIST;
 
           it('存在する場合、該当のエラーメッセージは返さない。', () => {
             const existHours = { startTime: { hours: 1 } };
@@ -742,7 +742,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_HOURS_INVALID_VAL;
 
           it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValHours = { startTime: { hours: 1 } };
@@ -792,8 +792,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_HOURS_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_HOURS_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_HOURS_MAX_OVER;
           const minHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MIN;
           const maxHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MAX;
 
@@ -839,7 +839,7 @@ describe('Util', () => {
 
       describe('minutes のチェック', () => {
         describe('項目の存在チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_NOT_EXIST;
+          const err = ERROR.SCHEDULE_STARTTIME_MINUTES_NOT_EXIST;
 
           it('存在する場合、該当のエラーメッセージは返さない。', () => {
             const existMinutes = { startTime: { minutes: 1 } };
@@ -853,7 +853,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_MINUTES_INVALID_VAL;
 
           it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValMinutes = { startTime: { minutes: 1 } };
@@ -903,8 +903,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_MINUTES_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MAX_OVER;
           const minMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MIN;
           const maxMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MAX;
 
@@ -950,7 +950,7 @@ describe('Util', () => {
 
       describe('seconds のチェック', () => {
         describe('項目の存在チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_NOT_EXIST;
+          const err = ERROR.SCHEDULE_STARTTIME_SECONDS_NOT_EXIST;
 
           it('存在する場合、該当のエラーメッセージは返さない。', () => {
             const existSeconds = { startTime: { seconds: 1 } };
@@ -965,7 +965,7 @@ describe('Util', () => {
 
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_INVALID_VAL;
+          const err = ERROR.SCHEDULE_STARTTIME_SECONDS_INVALID_VAL;
 
           it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValSeconds = { startTime: { seconds: 1 } };
@@ -1015,8 +1015,8 @@ describe('Util', () => {
         });
 
         describe('値の範囲チェック', () => {
-          const lessErr = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_MIN_LESS;
-          const overErr = ERROR_MSG.SCHEDULE_STARTTIME_SECONDS_MAX_OVER;
+          const lessErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MIN_LESS;
+          const overErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MAX_OVER;
           const minSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MIN;
           const maxSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MAX;
 
