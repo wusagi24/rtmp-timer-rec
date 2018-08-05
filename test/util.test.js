@@ -58,7 +58,7 @@ describe('Util', () => {
       });
 
       describe('値の型チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_TITLE_INVALID_VAL;
+        const err = ERROR_MSG.SCHEDULE_TITLE_INVALID_TYPE;
 
         it('文字列の場合、該当のエラーメッセージは返さない。', () => {
           const strValTitle = { title: 'hoge' };
@@ -103,7 +103,7 @@ describe('Util', () => {
       });
 
       describe('値の形式チェック', () => {
-        const err = ERROR_MSG.SCHEDULE_SOURCE_INVALID_VAL;
+        const err = ERROR_MSG.SCHEDULE_SOURCE_INVALID_TYPE;
 
         it('文字列の場合、該当のエラーメッセージは返さない。', () => {
           const strValSource = { source: 'hoge' };
@@ -281,7 +281,7 @@ describe('Util', () => {
 
       describe('dayOfWeek のチェック', () => {
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
+          const err = ERROR_MSG.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDayOfWeek = { startTime: { dayOfWeek: 1 } };
@@ -440,7 +440,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
+          const err = ERROR_MSG.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValMonth = { startTime: { month: 1 } };
@@ -599,7 +599,7 @@ describe('Util', () => {
         });
 
         describe('値の形式チェック', () => {
-          const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
+          const err = ERROR_MSG.SCHEDULE_STARTTIME_DATE_INVALID_TYPE;
 
           it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
             const plusIntValDate = { startTime: { date: 1 } };
