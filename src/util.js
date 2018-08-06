@@ -87,7 +87,9 @@ export function validateSchedule(schedule) {
 
     const recTime = Number(String(schedule.recTime));
 
-    if (Number.isNaN(recTime) || !Number.isInteger(recTime)) {
+    if (schedule.recTime === ''
+      || Number.isNaN(recTime)
+      || !Number.isInteger(recTime)) {
       return [ ERROR.SCHEDULE_RECTIME_INVALID_VAL ];
     }
 
