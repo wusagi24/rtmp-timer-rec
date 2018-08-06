@@ -267,16 +267,10 @@ export function validateCronTime(cronTime) {
  */
 export function validateSchedule(schedule) {
   /**
-   * @param {Schedule} schedule
+   * @param {Schedule.title} title
    * @return {string[]}
    */
-  const validateScheduleTitle = (schedule) => {
-    if (!schedule.hasOwnProperty('title')) {
-      return [ ERROR.SCHEDULE_TITLE_NOT_EXIST ];
-    }
-
-    const { title } = schedule;
-
+  const validateScheduleTitle = (title) => {
     if (typeof title !== 'string') {
       return [ ERROR.SCHEDULE_TITLE_INVALID_TYPE ];
     }
@@ -285,16 +279,10 @@ export function validateSchedule(schedule) {
   };
 
   /**
-   * @param {Schedule} schedule
+   * @param {Schedule.source} source
    * @return {string[]}
    */
-  const validateScheduleSource = (schedule) => {
-    if (!schedule.hasOwnProperty('source')) {
-      return [ ERROR.SCHEDULE_SOURCE_NOT_EXIST ];
-    }
-
-    const { source } = schedule;
-
+  const validateScheduleSource = (source) => {
     if (typeof source !== 'string') {
       return [ ERROR.SCHEDULE_SOURCE_INVALID_TYPE ];
     }
@@ -308,51 +296,54 @@ export function validateSchedule(schedule) {
   };
 
   /**
-   * @param {Schedule} schedule
+   * @param {Schedule.recTime} recTime
    * @return {string[]}
    */
-  const validateScheduleRecTime = (schedule) => {
-    if (!schedule.hasOwnProperty('recTime')) {
-      return [ ERROR.SCHEDULE_RECTIME_NOT_EXIST ];
-    }
+  const validateScheduleRecTime = (recTime) => {
+    const numRecTime = Number(String(recTime));
 
-    const recTime = Number(String(schedule.recTime));
-
-    if (schedule.recTime === ''
-      || Number.isNaN(recTime)
-      || !Number.isInteger(recTime)) {
+    if (recTime === ''
+      || Number.isNaN(numRecTime)
+      || !Number.isInteger(numRecTime)) {
       return [ ERROR.SCHEDULE_RECTIME_INVALID_VAL ];
     }
 
-    if (recTime < CONST_SET_CRONS.RECTIME_RANGE_MIN) {
+    if (numRecTime < CONST_SET_CRONS.RECTIME_RANGE_MIN) {
       return [ ERROR.SCHEDULE_RECTIME_MIN_LESS ];
     }
 
-    if (recTime > CONST_SET_CRONS.RECTIME_RANGE_MAX) {
+    if (numRecTime > CONST_SET_CRONS.RECTIME_RANGE_MAX) {
       return [ ERROR.SCHEDULE_RECTIME_MAX_OVER ];
     }
 
     return [];
   };
 
-  /**
-   * @param {Schedule} schedule
-   * @return {string[]}
-   */
-  const validateScheduleStartTime = (schedule) => {
-    if (!schedule.hasOwnProperty('startTime')) {
-      return [ ERROR.SCHEDULE_STARTTIME_NOT_EXIST ];
-    }
+  const error = [];
 
-    return validateCronTime(schedule.startTime);
-  };
+  if (schedule.hasOwnProperty('title')) {
+    error.push(...validateScheduleTitle(schedule.title));
+  } else {
+    error.push(ERROR.SCHEDULE_TITLE_NOT_EXIST);
+  }
 
-  const error = [].concat(
-    validateScheduleTitle(schedule),
-    validateScheduleSource(schedule),
-    validateScheduleRecTime(schedule),
-    validateScheduleStartTime(schedule),
-  );
+  if (schedule.hasOwnProperty('source')) {
+    error.push(...validateScheduleSource(schedule.source));
+  } else {
+    error.push(ERROR.SCHEDULE_SOURCE_NOT_EXIST);
+  }
+
+  if (schedule.hasOwnProperty('recTime')) {
+    error.push(...validateScheduleRecTime(schedule.recTime));
+  } else {
+    error.push(ERROR.SCHEDULE_RECTIME_NOT_EXIST);
+  }
+
+  if (schedule.hasOwnProperty('startTime')) {
+    error.push(...validateCronTime(schedule.startTime));
+  } else {
+    error.push(ERROR.SCHEDULE_STARTTIME_NOT_EXIST);
+  }
 
   return error;
 }
