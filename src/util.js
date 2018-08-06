@@ -61,8 +61,30 @@ export function validateSchedule(schedule) {
     return [];
   };
 
+  const validateScheduleSource = (schedule) => {
+    if (!schedule.hasOwnProperty('source')) {
+      return [ ERROR.SCHEDULE_SOURCE_NOT_EXIST ];
+    }
+
+    const { source } = schedule;
+
+    if (typeof source !== 'string') {
+      return [ ERROR.SCHEDULE_SOURCE_INVALID_TYPE ];
+    }
+
+    const err = [];
+
+    if (!/^rtmp:\/\/.*$/.test(source)
+      && CONST_SET_CRONS.SOURCE_TYPE.indexOf(source) === -1) {
+      err.push(ERROR.SCHEDULE_SOURCE_INVALID_VAL);
+    }
+
+    return err;
+  };
+
   const error = [].concat(
     validateScheduleTitle(schedule),
+    validateScheduleSource(schedule),
   );
 
   return error;
