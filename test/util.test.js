@@ -31,7 +31,7 @@ describe('Util', () => {
     });
   });
 
-  describe('validScheduleData(schedule)', () => {
+  describe('validateSchedule(schedule)', () => {
     const hasTargetError = (errors, errMsg) => {
       try {
         const errIndex = errors.indexOf(errMsg);
@@ -135,7 +135,7 @@ describe('Util', () => {
         const err = ERROR.SCHEDULE_SOURCE_INVALID_VAL;
 
         it('rtmp url 文字列の場合、該当のエラーメッセージは返さない。', () => {
-          const urlStrValSource = 'rtmp://example.com/hoge/fugo';
+          const urlStrValSource = { source: 'rtmp://example.com/hoge/fugo' };
           assert(!hasTargetError(validateSchedule(urlStrValSource), err));
         });
 
@@ -147,7 +147,7 @@ describe('Util', () => {
         });
 
         it('不正な文字列の場合、該当のエラーメッセージを返す。', () => {
-          const invalidStrSource = 'hoge';
+          const invalidStrSource = { source: 'hoge' };
           assert(hasTargetError(validateSchedule(invalidStrSource), err));
         });
       });
