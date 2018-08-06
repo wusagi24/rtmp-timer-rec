@@ -4,20 +4,796 @@ import assert from 'assert';
 
 import * as CONST_SET_CRONS from '../src/const/setCrons';
 import * as ERROR from '../src/const/error';
-import { validateSchedule } from '../src/validate';
+import { validateCronTime, validateSchedule } from '../src/validate';
+
+const hasTargetError = (errors, errMsg) => {
+  try {
+    const errIndex = errors.indexOf(errMsg);
+
+    return (errIndex !== -1);
+  } catch (err) {
+    assert.fail();
+  }
+};
 
 describe('validate', () => {
+  describe('validateCronTime(CronTime)', () => {
+    describe('CronTime.dayOfWeek のチェック', () => {
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE;
+
+        it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValDayOfWeek = { dayOfWeek: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValDayOfWeek), err));
+
+          const zeroValDayOfWeek = { dayOfWeek: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValDayOfWeek), err));
+
+          const minusIntValDayOfWeek = { dayOfWeek: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValDayOfWeek), err));
+
+          const strValDayOfWeek = { dayOfWeek: 'hoge' };
+          assert(!hasTargetError(validateCronTime(strValDayOfWeek), err));
+
+          const emptyStrValDayOfWeek = { dayOfWeek: '' };
+          assert(!hasTargetError(validateCronTime(emptyStrValDayOfWeek), err));
+        });
+
+        it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValDayOfWeek = { dayOfWeek: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValDayOfWeek), err));
+
+          const NaNValDayOfWeek = { dayOfWeek: NaN };
+          assert(hasTargetError(validateCronTime(NaNValDayOfWeek), err));
+
+          const boolValDayOfWeek = { dayOfWeek: true };
+          assert(hasTargetError(validateCronTime(boolValDayOfWeek), err));
+
+          const objValDayOfWeek = { dayOfWeek: {} };
+          assert(hasTargetError(validateCronTime(objValDayOfWeek), err));
+
+          const undefinedValDayOfWeek = { dayOfWeek: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValDayOfWeek), err));
+
+          const nullValDayOfWeek = { dayOfWeek: null };
+          assert(hasTargetError(validateCronTime(nullValDayOfWeek), err));
+        });
+      });
+
+      describe('値の内容チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
+        const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
+
+        it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValDayOfWeek = { dayOfWeek: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValDayOfWeek), err));
+
+          const zeroValDayOfWeek = { dayOfWeek: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValDayOfWeek), err));
+
+          const minusIntValDayOfWeek = { dayOfWeek: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValDayOfWeek), err));
+
+          const strPlusIntValDayOfWeek = { dayOfWeek: '1' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValDayOfWeek), err));
+
+          const strZeroValDayOfWeek = { dayOfWeek: '0' };
+          assert(!hasTargetError(validateCronTime(strZeroValDayOfWeek), err));
+
+          const strMinusIntValDayOfWeek = { dayOfWeek: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValDayOfWeek), err));
+        });
+
+        it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const validStrValDayOfWeek = { dayOfWeek: validStr };
+          assert(!hasTargetError(validateCronTime(validStrValDayOfWeek), err));
+        });
+
+        it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
+          const invalidStrValDayOfWeek1 = { dayOfWeek: 'hoge' };
+          assert(hasTargetError(validateCronTime(invalidStrValDayOfWeek1), err));
+
+          const invalidStrValDayOfWeek2 = { dayOfWeek: `${validStr}${validStr}` };
+          assert(hasTargetError(validateCronTime(invalidStrValDayOfWeek2), err));
+
+          const emptyStrValDayOfWeek = { dayOfWeek: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValDayOfWeek), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MAX_OVER;
+        const minDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MIN;
+        const maxDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValDayOfWeek = { dayOfWeek: minDayOfWeek };
+          assert(!hasTargetError(validateCronTime(minValDayOfWeek), lessErr));
+          assert(!hasTargetError(validateCronTime(minValDayOfWeek), overErr));
+
+          const maxValDayOfWeek = { dayOfWeek: maxDayOfWeek };
+          assert(!hasTargetError(validateCronTime(maxValDayOfWeek), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValDayOfWeek), overErr));
+
+          const strMinValDayOfWeek = { dayOfWeek: `${minDayOfWeek}` };
+          assert(!hasTargetError(validateCronTime(strMinValDayOfWeek), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValDayOfWeek), overErr));
+
+          const strMaxValDayOfWeek = { dayOfWeek: `${maxDayOfWeek}` };
+          assert(!hasTargetError(validateCronTime(strMaxValDayOfWeek), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValDayOfWeek), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessDayOfWeek = minDayOfWeek - 1;
+
+          const minLessValDayOfWeek = { dayOfWeek: lessDayOfWeek };
+          assert(hasTargetError(validateCronTime(minLessValDayOfWeek), lessErr));
+
+          const strMinLessValDayOfWeek = { dayOfWeek: `${lessDayOfWeek}` };
+          assert(hasTargetError(validateCronTime(strMinLessValDayOfWeek), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overDayOfWeek = maxDayOfWeek + 1;
+
+          const maxOverValDayOfWeek = { dayOfWeek: overDayOfWeek };
+          assert(hasTargetError(validateCronTime(maxOverValDayOfWeek), overErr));
+
+          const strMaxOverValDayOfWeek = { dayOfWeek: `${overDayOfWeek}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValDayOfWeek), overErr));
+        });
+      });
+    });
+
+    describe('CronTime.month のチェック', () => {
+      describe('項目の存在チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_MONTH_NOT_EXIST;
+
+        it('date が存在していて且つ month が存在する場合は、該当のエラーメッセージは返さない。', () => {
+          const existDateAndMonth = { date: 1, month: 1 };
+          assert(!hasTargetError(validateCronTime(existDateAndMonth), err));
+        });
+
+        it('date が存在していて且つ month が存在しない場合、該当のエラーメッセージを返す。', () => {
+          const existDate = { date: 1 };
+          assert(hasTargetError(validateCronTime(existDate), err));
+        });
+
+        it('date が存在しない場合 month の有無にかかわらず、該当のエラーメッセージは返さない。', () => {
+          const existMonth = { month: 1 };
+          assert(!hasTargetError(validateCronTime(existMonth), err));
+
+          const notexistDateAndMonth = {};
+          assert(!hasTargetError(validateCronTime(notexistDateAndMonth), err));
+        });
+      });
+
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE;
+
+        it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValMonth = { month: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValMonth), err));
+
+          const zeroValMonth = { month: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValMonth), err));
+
+          const minusIntValMonth = { month: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValMonth), err));
+
+          const strValMonth = { month: 'hoge' };
+          assert(!hasTargetError(validateCronTime(strValMonth), err));
+
+          const emptyStrValMonth = { month: '' };
+          assert(!hasTargetError(validateCronTime(emptyStrValMonth), err));
+        });
+
+        it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValMonth = { month: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValMonth), err));
+
+          const NaNValMonth = { month: NaN };
+          assert(hasTargetError(validateCronTime(NaNValMonth), err));
+
+          const boolValMonth = { month: true };
+          assert(hasTargetError(validateCronTime(boolValMonth), err));
+
+          const objValMonth = { month: {} };
+          assert(hasTargetError(validateCronTime(objValMonth), err));
+
+          const undefinedValMonth = { month: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValMonth), err));
+
+          const nullValMonth = { month: null };
+          assert(hasTargetError(validateCronTime(nullValMonth), err));
+        });
+      });
+
+      describe('値の内容チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
+        const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
+
+        it('整数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValMonth = { month: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValMonth), err));
+
+          const zeroValMonth = { month: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValMonth), err));
+
+          const minusIntValMonth = { month: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValMonth), err));
+
+          const strPlusIntValMonth = { month: '1' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValMonth), err));
+
+          const strZeroValMonth = { month: '0' };
+          assert(!hasTargetError(validateCronTime(strZeroValMonth), err));
+
+          const strMinusIntValMonth = { month: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValMonth), err));
+        });
+
+        it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const validStrValMonth = { month: validStr };
+          assert(!hasTargetError(validateCronTime(validStrValMonth), err));
+        });
+
+        it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
+          const invalidStrValMonth1 = { month: 'hoge' };
+          assert(hasTargetError(validateCronTime(invalidStrValMonth1), err));
+
+          const invalidStrValMonth2 = { month: `${validStr}${validStr}` };
+          assert(hasTargetError(validateCronTime(invalidStrValMonth2), err));
+
+          const emptyStrValMonth = { month: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValMonth), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_MONTH_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_MONTH_MAX_OVER;
+        const minMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MIN;
+        const maxMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValMonth = { month: minMonth };
+          assert(!hasTargetError(validateCronTime(minValMonth), lessErr));
+          assert(!hasTargetError(validateCronTime(minValMonth), overErr));
+
+          const maxValMonth = { month: maxMonth };
+          assert(!hasTargetError(validateCronTime(maxValMonth), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValMonth), overErr));
+
+          const strMinValMonth = { month: `${minMonth}` };
+          assert(!hasTargetError(validateCronTime(strMinValMonth), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValMonth), overErr));
+
+          const strMaxValMonth = { month: `${maxMonth}` };
+          assert(!hasTargetError(validateCronTime(strMaxValMonth), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValMonth), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessMonth = minMonth - 1;
+
+          const minLessValMonth = { month: lessMonth };
+          assert(hasTargetError(validateCronTime(minLessValMonth), lessErr));
+
+          const strMinLessValMonth = { month: `${lessMonth}` };
+          assert(hasTargetError(validateCronTime(strMinLessValMonth), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overMonth = maxMonth + 1;
+
+          const maxOverValMonth = { month: overMonth };
+          assert(hasTargetError(validateCronTime(maxOverValMonth), overErr));
+
+          const strMaxOverValMonth = { month: `${overMonth}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValMonth), overErr));
+        });
+      });
+    });
+
+    describe('CronTime.date のチェック', () => {
+      describe('項目の存在チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_DATE_NOT_EXIST;
+
+        it('month が存在していて且つ date が存在する場合は、該当のエラーメッセージは返さない。', () => {
+          const existDateAndMonth = { date: 1, month: 1 };
+          assert(!hasTargetError(validateCronTime(existDateAndMonth), err));
+        });
+
+        it('month が存在していて且つ date が存在しない場合、該当のエラーメッセージを返す。', () => {
+          const existMonth = { month: 1 };
+          assert(hasTargetError(validateCronTime(existMonth), err));
+        });
+
+        it('month が存在しない場合 date の有無にかかわらず、該当のエラーメッセージは返さない。', () => {
+          const existDate = { date: 1 };
+          assert(!hasTargetError(validateCronTime(existDate), err));
+
+          const notexistDateAndMonth = {};
+          assert(!hasTargetError(validateCronTime(notexistDateAndMonth), err));
+        });
+      });
+
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_TYPE;
+
+        it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValDate = { date: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValDate), err));
+
+          const zeroValDate = { date: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValDate), err));
+
+          const minusIntValDate = { date: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValDate), err));
+
+          const strValDate = { date: 'hoge' };
+          assert(!hasTargetError(validateCronTime(strValDate), err));
+
+          const emptyStrValDate = { date: '' };
+          assert(!hasTargetError(validateCronTime(emptyStrValDate), err));
+        });
+
+        it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValDate = { date: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValDate), err));
+
+          const NaNValDate = { date: NaN };
+          assert(hasTargetError(validateCronTime(NaNValDate), err));
+
+          const boolValDate = { date: true };
+          assert(hasTargetError(validateCronTime(boolValDate), err));
+
+          const objValDate = { date: {} };
+          assert(hasTargetError(validateCronTime(objValDate), err));
+
+          const undefinedValDate = { date: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValDate), err));
+
+          const nullValDate = { date: null };
+          assert(hasTargetError(validateCronTime(nullValDate), err));
+        });
+      });
+
+      describe('値の内容チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
+        const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
+
+        it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValDate = { date: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValDate), err));
+
+          const zeroValDate = { date: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValDate), err));
+
+          const minusIntValDate = { date: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValDate), err));
+
+          const strPlusIntValDate = { date: '1' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValDate), err));
+
+          const strZeroValDate = { date: '0' };
+          assert(!hasTargetError(validateCronTime(strZeroValDate), err));
+
+          const strMinusIntValDate = { date: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValDate), err));
+        });
+
+        it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const validStrValDate = { date: validStr };
+          assert(!hasTargetError(validateCronTime(validStrValDate), err));
+        });
+
+        it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
+          const invalidStrValDate1 = { date: 'hoge' };
+          assert(hasTargetError(validateCronTime(invalidStrValDate1), err));
+
+          const invalidStrValDate2 = { date: `${validStr}${validStr}` };
+          assert(hasTargetError(validateCronTime(invalidStrValDate2), err));
+
+          const emptyStrValDate = { date: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValDate), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_DATE_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_DATE_MAX_OVER;
+        const minDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MIN;
+        const maxDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValDate = { date: minDate };
+          assert(!hasTargetError(validateCronTime(minValDate), lessErr));
+          assert(!hasTargetError(validateCronTime(minValDate), overErr));
+
+          const maxValDate = { date: maxDate };
+          assert(!hasTargetError(validateCronTime(maxValDate), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValDate), overErr));
+
+          const strMinValDate = { date: `${minDate}` };
+          assert(!hasTargetError(validateCronTime(strMinValDate), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValDate), overErr));
+
+          const strMaxValDate = { date: `${maxDate}` };
+          assert(!hasTargetError(validateCronTime(strMaxValDate), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValDate), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessDate = minDate - 1;
+
+          const minLessValDate = { date: lessDate };
+          assert(hasTargetError(validateCronTime(minLessValDate), lessErr));
+
+          const strMinLessValDate = { date: `${lessDate}` };
+          assert(hasTargetError(validateCronTime(strMinLessValDate), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overDate = maxDate + 1;
+
+          const maxOverValDate = { date: overDate };
+          assert(hasTargetError(validateCronTime(maxOverValDate), overErr));
+
+          const strMaxOverValDate = { date: `${overDate}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValDate), overErr));
+        });
+      });
+    });
+
+    describe('CronTime.hours のチェック', () => {
+      describe('項目の存在チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_HOURS_NOT_EXIST;
+
+        it('存在する場合、該当のエラーメッセージは返さない。', () => {
+          const existHours = { hours: 1 };
+          assert(!hasTargetError(validateCronTime(existHours), err));
+        });
+
+        it('存在しない場合、該当のエラーメッセージを返す。', () => {
+          const notExistHours = {};
+          assert(hasTargetError(validateCronTime(notExistHours), err));
+        });
+      });
+
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_HOURS_INVALID_VAL;
+
+        it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValHours = { hours: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValHours), err));
+
+          const zeroValHours = { hours: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValHours), err));
+
+          const minusIntValHours = { hours: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValHours), err));
+
+          const strPlusIntValHours = { hours: '01' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValHours), err));
+
+          const strZeroValHours = { hours: '00' };
+          assert(!hasTargetError(validateCronTime(strZeroValHours), err));
+
+          const strMinusIntValHours = { hours: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValHours), err));
+        });
+
+        it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValHours = { hours: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValHours), err));
+
+          const strFloatValHours = { hours: '1.1' };
+          assert(hasTargetError(validateCronTime(strFloatValHours), err));
+
+          const NaNValHours = { hours: NaN };
+          assert(hasTargetError(validateCronTime(NaNValHours), err));
+
+          const strValHours = { hours: 'hoge' };
+          assert(hasTargetError(validateCronTime(strValHours), err));
+
+          const emptyStrValHours = { hours: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValHours), err));
+
+          const boolValHours = { hours: true };
+          assert(hasTargetError(validateCronTime(boolValHours), err));
+
+          const objValHours = { hours: {} };
+          assert(hasTargetError(validateCronTime(objValHours), err));
+
+          const undefinedValHours = { hours: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValHours), err));
+
+          const nullValHours = { hours: null };
+          assert(hasTargetError(validateCronTime(nullValHours), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_HOURS_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_HOURS_MAX_OVER;
+        const minHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MIN;
+        const maxHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValHours = { hours: minHours };
+          assert(!hasTargetError(validateCronTime(minValHours), lessErr));
+          assert(!hasTargetError(validateCronTime(minValHours), overErr));
+
+          const maxValHours = { hours: maxHours };
+          assert(!hasTargetError(validateCronTime(maxValHours), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValHours), overErr));
+
+          const strMinValHours = { hours: `${minHours}` };
+          assert(!hasTargetError(validateCronTime(strMinValHours), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValHours), overErr));
+
+          const strMaxValHours = { hours: `${maxHours}` };
+          assert(!hasTargetError(validateCronTime(strMaxValHours), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValHours), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessHours = minHours - 1;
+
+          const minLessValHours = { hours: lessHours };
+          assert(hasTargetError(validateCronTime(minLessValHours), lessErr));
+
+          const strMinLessValHours = { hours: `${lessHours}` };
+          assert(hasTargetError(validateCronTime(strMinLessValHours), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overHours = maxHours + 1;
+
+          const maxOverValHours = { hours: overHours };
+          assert(hasTargetError(validateCronTime(maxOverValHours), overErr));
+
+          const strMaxOverValHours = { hours: `${overHours}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValHours), overErr));
+        });
+      });
+    });
+
+    describe('CronTime.minutes のチェック', () => {
+      describe('項目の存在チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_MINUTES_NOT_EXIST;
+
+        it('存在する場合、該当のエラーメッセージは返さない。', () => {
+          const existMinutes = { minutes: 1 };
+          assert(!hasTargetError(validateCronTime(existMinutes), err));
+        });
+
+        it('存在しない場合、該当のエラーメッセージを返す。', () => {
+          const notExistMinutes = {};
+          assert(hasTargetError(validateCronTime(notExistMinutes), err));
+        });
+      });
+
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_MINUTES_INVALID_VAL;
+
+        it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValMinutes = { minutes: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValMinutes), err));
+
+          const zeroValMinutes = { minutes: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValMinutes), err));
+
+          const minusIntValMinutes = { minutes: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValMinutes), err));
+
+          const strPlusIntValMinutes = { minutes: '01' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValMinutes), err));
+
+          const strZeroValMinutes = { minutes: '00' };
+          assert(!hasTargetError(validateCronTime(strZeroValMinutes), err));
+
+          const strMinusIntValMinutes = { minutes: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValMinutes), err));
+        });
+
+        it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValMinutes = { minutes: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValMinutes), err));
+
+          const strFloatValMinutes = { minutes: '1.1' };
+          assert(hasTargetError(validateCronTime(strFloatValMinutes), err));
+
+          const NaNValMinutes = { minutes: NaN };
+          assert(hasTargetError(validateCronTime(NaNValMinutes), err));
+
+          const strValMinutes = { minutes: 'hoge' };
+          assert(hasTargetError(validateCronTime(strValMinutes), err));
+
+          const emptyStrValMinutes = { minutes: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValMinutes), err));
+
+          const boolValMinutes = { minutes: true };
+          assert(hasTargetError(validateCronTime(boolValMinutes), err));
+
+          const objValMinutes = { minutes: {} };
+          assert(hasTargetError(validateCronTime(objValMinutes), err));
+
+          const undefinedValMinutes = { minutes: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValMinutes), err));
+
+          const nullValMinutes = { minutes: null };
+          assert(hasTargetError(validateCronTime(nullValMinutes), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MAX_OVER;
+        const minMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MIN;
+        const maxMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValMinutes = { minutes: minMinutes };
+          assert(!hasTargetError(validateCronTime(minValMinutes), lessErr));
+          assert(!hasTargetError(validateCronTime(minValMinutes), overErr));
+
+          const maxValMinutes = { minutes: maxMinutes };
+          assert(!hasTargetError(validateCronTime(maxValMinutes), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValMinutes), overErr));
+
+          const strMinValMinutes = { minutes: `${minMinutes}` };
+          assert(!hasTargetError(validateCronTime(strMinValMinutes), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValMinutes), overErr));
+
+          const strMaxValMinutes = { minutes: `${maxMinutes}` };
+          assert(!hasTargetError(validateCronTime(strMaxValMinutes), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValMinutes), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessMinutes = minMinutes - 1;
+
+          const minLessValMinutes = { minutes: lessMinutes };
+          assert(hasTargetError(validateCronTime(minLessValMinutes), lessErr));
+
+          const strMinLessValMinutes = { minutes: `${lessMinutes}` };
+          assert(hasTargetError(validateCronTime(strMinLessValMinutes), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overMinutes = maxMinutes + 1;
+
+          const maxOverValMinutes = { minutes: overMinutes };
+          assert(hasTargetError(validateCronTime(maxOverValMinutes), overErr));
+
+          const strMaxOverValMinutes = { minutes: `${overMinutes}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValMinutes), overErr));
+        });
+      });
+    });
+
+    describe('CronTime.seconds のチェック', () => {
+      describe('項目の存在チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_SECONDS_NOT_EXIST;
+
+        it('存在する場合、該当のエラーメッセージは返さない。', () => {
+          const existSeconds = { seconds: 1 };
+          assert(!hasTargetError(validateCronTime(existSeconds), err));
+        });
+
+        it('存在しない場合、該当のエラーメッセージを返す。', () => {
+          const notExistSeconds = {};
+          assert(hasTargetError(validateCronTime(notExistSeconds), err));
+        });
+      });
+
+
+      describe('値の形式チェック', () => {
+        const err = ERROR.SCHEDULE_STARTTIME_SECONDS_INVALID_VAL;
+
+        it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
+          const plusIntValSeconds = { seconds: 1 };
+          assert(!hasTargetError(validateCronTime(plusIntValSeconds), err));
+
+          const zeroValSeconds = { seconds: 0 };
+          assert(!hasTargetError(validateCronTime(zeroValSeconds), err));
+
+          const minusIntValSeconds = { seconds: -1 };
+          assert(!hasTargetError(validateCronTime(minusIntValSeconds), err));
+
+          const strPlusIntValSeconds = { seconds: '01' };
+          assert(!hasTargetError(validateCronTime(strPlusIntValSeconds), err));
+
+          const strZeroValSeconds = { seconds: '00' };
+          assert(!hasTargetError(validateCronTime(strZeroValSeconds), err));
+
+          const strMinusIntValSeconds = { seconds: '-1' };
+          assert(!hasTargetError(validateCronTime(strMinusIntValSeconds), err));
+        });
+
+        it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
+          const floatValSeconds = { seconds: 1.1 };
+          assert(hasTargetError(validateCronTime(floatValSeconds), err));
+
+          const strFloatValSeconds = { seconds: '1.1' };
+          assert(hasTargetError(validateCronTime(strFloatValSeconds), err));
+
+          const NaNValSeconds = { seconds: NaN };
+          assert(hasTargetError(validateCronTime(NaNValSeconds), err));
+
+          const strValSeconds = { seconds: 'hoge' };
+          assert(hasTargetError(validateCronTime(strValSeconds), err));
+
+          const emptyStrValSeconds = { seconds: '' };
+          assert(hasTargetError(validateCronTime(emptyStrValSeconds), err));
+
+          const boolValSeconds = { seconds: true };
+          assert(hasTargetError(validateCronTime(boolValSeconds), err));
+
+          const objValSeconds = { seconds: {} };
+          assert(hasTargetError(validateCronTime(objValSeconds), err));
+
+          const undefinedValSeconds = { seconds: undefined };
+          assert(hasTargetError(validateCronTime(undefinedValSeconds), err));
+
+          const nullValSeconds = { seconds: null };
+          assert(hasTargetError(validateCronTime(nullValSeconds), err));
+        });
+      });
+
+      describe('値の範囲チェック', () => {
+        const lessErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MIN_LESS;
+        const overErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MAX_OVER;
+        const minSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MIN;
+        const maxSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MAX;
+
+        it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
+          const minValSeconds = { seconds: minSeconds };
+          assert(!hasTargetError(validateCronTime(minValSeconds), lessErr));
+          assert(!hasTargetError(validateCronTime(minValSeconds), overErr));
+
+          const maxValSeconds = { seconds: maxSeconds };
+          assert(!hasTargetError(validateCronTime(maxValSeconds), lessErr));
+          assert(!hasTargetError(validateCronTime(maxValSeconds), overErr));
+
+          const strMinValSeconds = { seconds: `${minSeconds}` };
+          assert(!hasTargetError(validateCronTime(strMinValSeconds), lessErr));
+          assert(!hasTargetError(validateCronTime(strMinValSeconds), overErr));
+
+          const strMaxValSeconds = { seconds: `${maxSeconds}` };
+          assert(!hasTargetError(validateCronTime(strMaxValSeconds), lessErr));
+          assert(!hasTargetError(validateCronTime(strMaxValSeconds), overErr));
+        });
+
+        it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
+          const lessSeconds = minSeconds - 1;
+
+          const minLessValSeconds = { seconds: lessSeconds };
+          assert(hasTargetError(validateCronTime(minLessValSeconds), lessErr));
+
+          const strMinLessValSeconds = { seconds: `${lessSeconds}` };
+          assert(hasTargetError(validateCronTime(strMinLessValSeconds), lessErr));
+        });
+
+        it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
+          const overSeconds = maxSeconds + 1;
+
+          const maxOverValSeconds = { seconds: overSeconds };
+          assert(hasTargetError(validateCronTime(maxOverValSeconds), overErr));
+
+          const strMaxOverValSeconds = { seconds: `${overSeconds}` };
+          assert(hasTargetError(validateCronTime(strMaxOverValSeconds), overErr));
+        });
+      });
+    });
+  });
+
   describe('validateSchedule(Schedule)', () => {
-    const hasTargetError = (errors, errMsg) => {
-      try {
-        const errIndex = errors.indexOf(errMsg);
-
-        return (errIndex !== -1);
-      } catch (err) {
-        assert.fail();
-      }
-    };
-
     describe('schedule.title のチェック', () => {
       describe('項目の存在チェック', () => {
         const err = ERROR.SCHEDULE_TITLE_NOT_EXIST;
@@ -257,796 +1033,7 @@ describe('validate', () => {
           assert(hasTargetError(validateSchedule(notExistStartTime), err));
         });
       });
-
-      describe('dayOfWeek のチェック', () => {
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE;
-
-          it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValDayOfWeek = { startTime: { dayOfWeek: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValDayOfWeek), err));
-
-            const zeroValDayOfWeek = { startTime: { dayOfWeek: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValDayOfWeek), err));
-
-            const minusIntValDayOfWeek = { startTime: { dayOfWeek: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValDayOfWeek), err));
-
-            const strValDayOfWeek = { startTime: { dayOfWeek: 'hoge' } };
-            assert(!hasTargetError(validateSchedule(strValDayOfWeek), err));
-
-            const emptyStrValDayOfWeek = { startTime: { dayOfWeek: '' } };
-            assert(!hasTargetError(validateSchedule(emptyStrValDayOfWeek), err));
-          });
-
-          it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValDayOfWeek = { startTime: { dayOfWeek: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValDayOfWeek), err));
-
-            const NaNValDayOfWeek = { startTime: { dayOfWeek: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValDayOfWeek), err));
-
-            const boolValDayOfWeek = { startTime: { dayOfWeek: true } };
-            assert(hasTargetError(validateSchedule(boolValDayOfWeek), err));
-
-            const objValDayOfWeek = { startTime: { dayOfWeek: {} } };
-            assert(hasTargetError(validateSchedule(objValDayOfWeek), err));
-
-            const undefinedValDayOfWeek = { startTime: { dayOfWeek: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValDayOfWeek), err));
-
-            const nullValDayOfWeek = { startTime: { dayOfWeek: null } };
-            assert(hasTargetError(validateSchedule(nullValDayOfWeek), err));
-          });
-        });
-
-        describe('値の内容チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_VAL;
-          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
-
-          it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValDayOfWeek = { startTime: { dayOfWeek: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValDayOfWeek), err));
-
-            const zeroValDayOfWeek = { startTime: { dayOfWeek: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValDayOfWeek), err));
-
-            const minusIntValDayOfWeek = { startTime: { dayOfWeek: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValDayOfWeek), err));
-
-            const strPlusIntValDayOfWeek = { startTime: { dayOfWeek: '1' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValDayOfWeek), err));
-
-            const strZeroValDayOfWeek = { startTime: { dayOfWeek: '0' } };
-            assert(!hasTargetError(validateSchedule(strZeroValDayOfWeek), err));
-
-            const strMinusIntValDayOfWeek = { startTime: { dayOfWeek: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValDayOfWeek), err));
-          });
-
-          it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const validStrValDayOfWeek = { startTime: { dayOfWeek: validStr } };
-            assert(!hasTargetError(validateSchedule(validStrValDayOfWeek), err));
-          });
-
-          it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
-            const invalidStrValDayOfWeek1 = { startTime: { dayOfWeek: 'hoge' } };
-            assert(hasTargetError(validateSchedule(invalidStrValDayOfWeek1), err));
-
-            const invalidStrValDayOfWeek2 = { startTime: { dayOfWeek: `${validStr}${validStr}` } };
-            assert(hasTargetError(validateSchedule(invalidStrValDayOfWeek2), err));
-
-            const emptyStrValDayOfWeek = { startTime: { dayOfWeek: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValDayOfWeek), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_MAX_OVER;
-          const minDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MIN;
-          const maxDayOfWeek = CONST_SET_CRONS.STARTTIME_DAYOFWEEK_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValDayOfWeek = { startTime: { dayOfWeek: minDayOfWeek } };
-            assert(!hasTargetError(validateSchedule(minValDayOfWeek), lessErr));
-            assert(!hasTargetError(validateSchedule(minValDayOfWeek), overErr));
-
-            const maxValDayOfWeek = { startTime: { dayOfWeek: maxDayOfWeek } };
-            assert(!hasTargetError(validateSchedule(maxValDayOfWeek), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValDayOfWeek), overErr));
-
-            const strMinValDayOfWeek = { startTime: { dayOfWeek: `${minDayOfWeek}` } };
-            assert(!hasTargetError(validateSchedule(strMinValDayOfWeek), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValDayOfWeek), overErr));
-
-            const strMaxValDayOfWeek = { startTime: { dayOfWeek: `${maxDayOfWeek}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValDayOfWeek), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValDayOfWeek), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessDayOfWeek = minDayOfWeek - 1;
-
-            const minLessValDayOfWeek = { startTime: { dayOfWeek: lessDayOfWeek } };
-            assert(hasTargetError(validateSchedule(minLessValDayOfWeek), lessErr));
-
-            const strMinLessValDayOfWeek = { startTime: { dayOfWeek: `${lessDayOfWeek}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValDayOfWeek), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overDayOfWeek = maxDayOfWeek + 1;
-
-            const maxOverValDayOfWeek = { startTime: { dayOfWeek: overDayOfWeek } };
-            assert(hasTargetError(validateSchedule(maxOverValDayOfWeek), overErr));
-
-            const strMaxOverValDayOfWeek = { startTime: { dayOfWeek: `${overDayOfWeek}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValDayOfWeek), overErr));
-          });
-        });
-      });
-
-      describe('month のチェック', () => {
-        describe('項目の存在チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_MONTH_NOT_EXIST;
-
-          it('date が存在していて且つ month が存在する場合は、該当のエラーメッセージは返さない。', () => {
-            const existDateAndMonth = {
-              startTime: { date: 1, month: 1 },
-            };
-            assert(!hasTargetError(validateSchedule(existDateAndMonth), err));
-          });
-
-          it('date が存在していて且つ month が存在しない場合、該当のエラーメッセージを返す。', () => {
-            const existDate = {
-              startTime: { date: 1 },
-            };
-            assert(hasTargetError(validateSchedule(existDate), err));
-          });
-
-          it('date が存在しない場合 month の有無にかかわらず、該当のエラーメッセージは返さない。', () => {
-            const existMonth = {
-              startTime: { month: 1 },
-            };
-            assert(!hasTargetError(validateSchedule(existMonth), err));
-
-            const notexistDateAndMonth = {
-              startTime: {},
-            };
-            assert(!hasTargetError(validateSchedule(notexistDateAndMonth), err));
-          });
-        });
-
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE;
-
-          it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValMonth = { startTime: { month: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValMonth), err));
-
-            const zeroValMonth = { startTime: { month: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValMonth), err));
-
-            const minusIntValMonth = { startTime: { month: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValMonth), err));
-
-            const strValMonth = { startTime: { month: 'hoge' } };
-            assert(!hasTargetError(validateSchedule(strValMonth), err));
-
-            const emptyStrValMonth = { startTime: { month: '' } };
-            assert(!hasTargetError(validateSchedule(emptyStrValMonth), err));
-          });
-
-          it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValMonth = { startTime: { month: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValMonth), err));
-
-            const NaNValMonth = { startTime: { month: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValMonth), err));
-
-            const boolValMonth = { startTime: { month: true } };
-            assert(hasTargetError(validateSchedule(boolValMonth), err));
-
-            const objValMonth = { startTime: { month: {} } };
-            assert(hasTargetError(validateSchedule(objValMonth), err));
-
-            const undefinedValMonth = { startTime: { month: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValMonth), err));
-
-            const nullValMonth = { startTime: { month: null } };
-            assert(hasTargetError(validateSchedule(nullValMonth), err));
-          });
-        });
-
-        describe('値の内容チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_VAL;
-          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
-
-          it('整数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValMonth = { startTime: { month: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValMonth), err));
-
-            const zeroValMonth = { startTime: { month: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValMonth), err));
-
-            const minusIntValMonth = { startTime: { month: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValMonth), err));
-
-            const strPlusIntValMonth = { startTime: { month: '1' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValMonth), err));
-
-            const strZeroValMonth = { startTime: { month: '0' } };
-            assert(!hasTargetError(validateSchedule(strZeroValMonth), err));
-
-            const strMinusIntValMonth = { startTime: { month: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValMonth), err));
-          });
-
-          it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const validStrValMonth = { startTime: { month: validStr } };
-            assert(!hasTargetError(validateSchedule(validStrValMonth), err));
-          });
-
-          it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
-            const invalidStrValMonth1 = { startTime: { month: 'hoge' } };
-            assert(hasTargetError(validateSchedule(invalidStrValMonth1), err));
-
-            const invalidStrValMonth2 = { startTime: { month: `${validStr}${validStr}` } };
-            assert(hasTargetError(validateSchedule(invalidStrValMonth2), err));
-
-            const emptyStrValMonth = { startTime: { month: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValMonth), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_MONTH_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_MONTH_MAX_OVER;
-          const minMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MIN;
-          const maxMonth = CONST_SET_CRONS.STARTTIME_MONTH_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValMonth = { startTime: { month: minMonth } };
-            assert(!hasTargetError(validateSchedule(minValMonth), lessErr));
-            assert(!hasTargetError(validateSchedule(minValMonth), overErr));
-
-            const maxValMonth = { startTime: { month: maxMonth } };
-            assert(!hasTargetError(validateSchedule(maxValMonth), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValMonth), overErr));
-
-            const strMinValMonth = { startTime: { month: `${minMonth}` } };
-            assert(!hasTargetError(validateSchedule(strMinValMonth), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValMonth), overErr));
-
-            const strMaxValMonth = { startTime: { month: `${maxMonth}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValMonth), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValMonth), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessMonth = minMonth - 1;
-
-            const minLessValMonth = { startTime: { month: lessMonth } };
-            assert(hasTargetError(validateSchedule(minLessValMonth), lessErr));
-
-            const strMinLessValMonth = { startTime: { month: `${lessMonth}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValMonth), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overMonth = maxMonth + 1;
-
-            const maxOverValMonth = { startTime: { month: overMonth } };
-            assert(hasTargetError(validateSchedule(maxOverValMonth), overErr));
-
-            const strMaxOverValMonth = { startTime: { month: `${overMonth}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValMonth), overErr));
-          });
-        });
-      });
-
-      describe('date のチェック', () => {
-        describe('項目の存在チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_DATE_NOT_EXIST;
-
-          it('month が存在していて且つ date が存在する場合は、該当のエラーメッセージは返さない。', () => {
-            const existDateAndMonth = {
-              startTime: { date: 1, month: 1 },
-            };
-            assert(!hasTargetError(validateSchedule(existDateAndMonth), err));
-          });
-
-          it('month が存在していて且つ date が存在しない場合、該当のエラーメッセージを返す。', () => {
-            const existMonth = {
-              startTime: { month: 1 },
-            };
-            assert(hasTargetError(validateSchedule(existMonth), err));
-          });
-
-          it('month が存在しない場合 date の有無にかかわらず、該当のエラーメッセージは返さない。', () => {
-            const existDate = {
-              startTime: { date: 1 },
-            };
-            assert(!hasTargetError(validateSchedule(existDate), err));
-
-            const notexistDateAndMonth = {
-              startTime: {}
-            };
-            assert(!hasTargetError(validateSchedule(notexistDateAndMonth), err));
-          });
-        });
-
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_TYPE;
-
-          it('整数値か文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValDate = { startTime: { date: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValDate), err));
-
-            const zeroValDate = { startTime: { date: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValDate), err));
-
-            const minusIntValDate = { startTime: { date: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValDate), err));
-
-            const strValDate = { startTime: { date: 'hoge' } };
-            assert(!hasTargetError(validateSchedule(strValDate), err));
-
-            const emptyStrValDate = { startTime: { date: '' } };
-            assert(!hasTargetError(validateSchedule(emptyStrValDate), err));
-          });
-
-          it('整数値か文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValDate = { startTime: { date: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValDate), err));
-
-            const NaNValDate = { startTime: { date: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValDate), err));
-
-            const boolValDate = { startTime: { date: true } };
-            assert(hasTargetError(validateSchedule(boolValDate), err));
-
-            const objValDate = { startTime: { date: {} } };
-            assert(hasTargetError(validateSchedule(objValDate), err));
-
-            const undefinedValDate = { startTime: { date: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValDate), err));
-
-            const nullValDate = { startTime: { date: null } };
-            assert(hasTargetError(validateSchedule(nullValDate), err));
-          });
-        });
-
-        describe('値の内容チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_DATE_INVALID_VAL;
-          const validStr = CONST_SET_CRONS.WILDCARD_CHAR;
-
-          it('数値もしくは数字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValDate = { startTime: { date: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValDate), err));
-
-            const zeroValDate = { startTime: { date: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValDate), err));
-
-            const minusIntValDate = { startTime: { date: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValDate), err));
-
-            const strPlusIntValDate = { startTime: { date: '1' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValDate), err));
-
-            const strZeroValDate = { startTime: { date: '0' } };
-            assert(!hasTargetError(validateSchedule(strZeroValDate), err));
-
-            const strMinusIntValDate = { startTime: { date: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValDate), err));
-          });
-
-          it('既定の文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const validStrValDate = { startTime: { date: validStr } };
-            assert(!hasTargetError(validateSchedule(validStrValDate), err));
-          });
-
-          it('数字列か既定以外の文字列の場合、該当のエラーメッセージを返す。', () => {
-            const invalidStrValDate1 = { startTime: { date: 'hoge' } };
-            assert(hasTargetError(validateSchedule(invalidStrValDate1), err));
-
-            const invalidStrValDate2 = { startTime: { date: `${validStr}${validStr}` } };
-            assert(hasTargetError(validateSchedule(invalidStrValDate2), err));
-
-            const emptyStrValDate = { startTime: { date: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValDate), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_DATE_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_DATE_MAX_OVER;
-          const minDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MIN;
-          const maxDate = CONST_SET_CRONS.STARTTIME_DATE_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValDate = { startTime: { date: minDate } };
-            assert(!hasTargetError(validateSchedule(minValDate), lessErr));
-            assert(!hasTargetError(validateSchedule(minValDate), overErr));
-
-            const maxValDate = { startTime: { date: maxDate } };
-            assert(!hasTargetError(validateSchedule(maxValDate), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValDate), overErr));
-
-            const strMinValDate = { startTime: { date: `${minDate}` } };
-            assert(!hasTargetError(validateSchedule(strMinValDate), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValDate), overErr));
-
-            const strMaxValDate = { startTime: { date: `${maxDate}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValDate), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValDate), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessDate = minDate - 1;
-
-            const minLessValDate = { startTime: { date: lessDate } };
-            assert(hasTargetError(validateSchedule(minLessValDate), lessErr));
-
-            const strMinLessValDate = { startTime: { date: `${lessDate}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValDate), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overDate = maxDate + 1;
-
-            const maxOverValDate = { startTime: { date: overDate } };
-            assert(hasTargetError(validateSchedule(maxOverValDate), overErr));
-
-            const strMaxOverValDate = { startTime: { date: `${overDate}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValDate), overErr));
-          });
-        });
-      });
-
-      describe('hours のチェック', () => {
-        describe('項目の存在チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_HOURS_NOT_EXIST;
-
-          it('存在する場合、該当のエラーメッセージは返さない。', () => {
-            const existHours = { startTime: { hours: 1 } };
-            assert(!hasTargetError(validateSchedule(existHours), err));
-          });
-
-          it('存在しない場合、該当のエラーメッセージを返す。', () => {
-            const notExistHours = { startTime: {} };
-            assert(hasTargetError(validateSchedule(notExistHours), err));
-          });
-        });
-
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_HOURS_INVALID_VAL;
-
-          it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValHours = { startTime: { hours: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValHours), err));
-
-            const zeroValHours = { startTime: { hours: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValHours), err));
-
-            const minusIntValHours = { startTime: { hours: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValHours), err));
-
-            const strPlusIntValHours = { startTime: { hours: '01' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValHours), err));
-
-            const strZeroValHours = { startTime: { hours: '00' } };
-            assert(!hasTargetError(validateSchedule(strZeroValHours), err));
-
-            const strMinusIntValHours = { startTime: { hours: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValHours), err));
-          });
-
-          it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValHours = { startTime: { hours: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValHours), err));
-
-            const strFloatValHours = { startTime: { hours: '1.1' } };
-            assert(hasTargetError(validateSchedule(strFloatValHours), err));
-
-            const NaNValHours = { startTime: { hours: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValHours), err));
-
-            const strValHours = { startTime: { hours: 'hoge' } };
-            assert(hasTargetError(validateSchedule(strValHours), err));
-
-            const emptyStrValHours = { startTime: { hours: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValHours), err));
-
-            const boolValHours = { startTime: { hours: true } };
-            assert(hasTargetError(validateSchedule(boolValHours), err));
-
-            const objValHours = { startTime: { hours: {} } };
-            assert(hasTargetError(validateSchedule(objValHours), err));
-
-            const undefinedValHours = { startTime: { hours: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValHours), err));
-
-            const nullValHours = { startTime: { hours: null } };
-            assert(hasTargetError(validateSchedule(nullValHours), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_HOURS_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_HOURS_MAX_OVER;
-          const minHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MIN;
-          const maxHours = CONST_SET_CRONS.STARTTIME_HOURS_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValHours = { startTime: { hours: minHours } };
-            assert(!hasTargetError(validateSchedule(minValHours), lessErr));
-            assert(!hasTargetError(validateSchedule(minValHours), overErr));
-
-            const maxValHours = { startTime: { hours: maxHours } };
-            assert(!hasTargetError(validateSchedule(maxValHours), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValHours), overErr));
-
-            const strMinValHours = { startTime: { hours: `${minHours}` } };
-            assert(!hasTargetError(validateSchedule(strMinValHours), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValHours), overErr));
-
-            const strMaxValHours = { startTime: { hours: `${maxHours}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValHours), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValHours), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessHours = minHours - 1;
-
-            const minLessValHours = { startTime: { hours: lessHours } };
-            assert(hasTargetError(validateSchedule(minLessValHours), lessErr));
-
-            const strMinLessValHours = { startTime: { hours: `${lessHours}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValHours), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overHours = maxHours + 1;
-
-            const maxOverValHours = { startTime: { hours: overHours } };
-            assert(hasTargetError(validateSchedule(maxOverValHours), overErr));
-
-            const strMaxOverValHours = { startTime: { hours: `${overHours}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValHours), overErr));
-          });
-        });
-      });
-
-      describe('minutes のチェック', () => {
-        describe('項目の存在チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_MINUTES_NOT_EXIST;
-
-          it('存在する場合、該当のエラーメッセージは返さない。', () => {
-            const existMinutes = { startTime: { minutes: 1 } };
-            assert(!hasTargetError(validateSchedule(existMinutes), err));
-          });
-
-          it('存在しない場合、該当のエラーメッセージを返す。', () => {
-            const notExistMinutes = { startTime: {} };
-            assert(hasTargetError(validateSchedule(notExistMinutes), err));
-          });
-        });
-
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_MINUTES_INVALID_VAL;
-
-          it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValMinutes = { startTime: { minutes: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValMinutes), err));
-
-            const zeroValMinutes = { startTime: { minutes: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValMinutes), err));
-
-            const minusIntValMinutes = { startTime: { minutes: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValMinutes), err));
-
-            const strPlusIntValMinutes = { startTime: { minutes: '01' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValMinutes), err));
-
-            const strZeroValMinutes = { startTime: { minutes: '00' } };
-            assert(!hasTargetError(validateSchedule(strZeroValMinutes), err));
-
-            const strMinusIntValMinutes = { startTime: { minutes: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValMinutes), err));
-          });
-
-          it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValMinutes = { startTime: { minutes: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValMinutes), err));
-
-            const strFloatValMinutes = { startTime: { minutes: '1.1' } };
-            assert(hasTargetError(validateSchedule(strFloatValMinutes), err));
-
-            const NaNValMinutes = { startTime: { minutes: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValMinutes), err));
-
-            const strValMinutes = { startTime: { minutes: 'hoge' } };
-            assert(hasTargetError(validateSchedule(strValMinutes), err));
-
-            const emptyStrValMinutes = { startTime: { minutes: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValMinutes), err));
-
-            const boolValMinutes = { startTime: { minutes: true } };
-            assert(hasTargetError(validateSchedule(boolValMinutes), err));
-
-            const objValMinutes = { startTime: { minutes: {} } };
-            assert(hasTargetError(validateSchedule(objValMinutes), err));
-
-            const undefinedValMinutes = { startTime: { minutes: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValMinutes), err));
-
-            const nullValMinutes = { startTime: { minutes: null } };
-            assert(hasTargetError(validateSchedule(nullValMinutes), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_MINUTES_MAX_OVER;
-          const minMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MIN;
-          const maxMinutes = CONST_SET_CRONS.STARTTIME_MINUTES_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValMinutes = { startTime: { minutes: minMinutes } };
-            assert(!hasTargetError(validateSchedule(minValMinutes), lessErr));
-            assert(!hasTargetError(validateSchedule(minValMinutes), overErr));
-
-            const maxValMinutes = { startTime: { minutes: maxMinutes } };
-            assert(!hasTargetError(validateSchedule(maxValMinutes), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValMinutes), overErr));
-
-            const strMinValMinutes = { startTime: { minutes: `${minMinutes}` } };
-            assert(!hasTargetError(validateSchedule(strMinValMinutes), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValMinutes), overErr));
-
-            const strMaxValMinutes = { startTime: { minutes: `${maxMinutes}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValMinutes), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValMinutes), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessMinutes = minMinutes - 1;
-
-            const minLessValMinutes = { startTime: { minutes: lessMinutes } };
-            assert(hasTargetError(validateSchedule(minLessValMinutes), lessErr));
-
-            const strMinLessValMinutes = { startTime: { minutes: `${lessMinutes}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValMinutes), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overMinutes = maxMinutes + 1;
-
-            const maxOverValMinutes = { startTime: { minutes: overMinutes } };
-            assert(hasTargetError(validateSchedule(maxOverValMinutes), overErr));
-
-            const strMaxOverValMinutes = { startTime: { minutes: `${overMinutes}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValMinutes), overErr));
-          });
-        });
-      });
-
-      describe('seconds のチェック', () => {
-        describe('項目の存在チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_SECONDS_NOT_EXIST;
-
-          it('存在する場合、該当のエラーメッセージは返さない。', () => {
-            const existSeconds = { startTime: { seconds: 1 } };
-            assert(!hasTargetError(validateSchedule(existSeconds), err));
-          });
-
-          it('存在しない場合、該当のエラーメッセージを返す。', () => {
-            const notExistSeconds = { startTime: {} };
-            assert(hasTargetError(validateSchedule(notExistSeconds), err));
-          });
-        });
-
-
-        describe('値の形式チェック', () => {
-          const err = ERROR.SCHEDULE_STARTTIME_SECONDS_INVALID_VAL;
-
-          it('整数値か整数文字列の場合、該当のエラーメッセージは返さない。', () => {
-            const plusIntValSeconds = { startTime: { seconds: 1 } };
-            assert(!hasTargetError(validateSchedule(plusIntValSeconds), err));
-
-            const zeroValSeconds = { startTime: { seconds: 0 } };
-            assert(!hasTargetError(validateSchedule(zeroValSeconds), err));
-
-            const minusIntValSeconds = { startTime: { seconds: -1 } };
-            assert(!hasTargetError(validateSchedule(minusIntValSeconds), err));
-
-            const strPlusIntValSeconds = { startTime: { seconds: '01' } };
-            assert(!hasTargetError(validateSchedule(strPlusIntValSeconds), err));
-
-            const strZeroValSeconds = { startTime: { seconds: '00' } };
-            assert(!hasTargetError(validateSchedule(strZeroValSeconds), err));
-
-            const strMinusIntValSeconds = { startTime: { seconds: '-1' } };
-            assert(!hasTargetError(validateSchedule(strMinusIntValSeconds), err));
-          });
-
-          it('整数値か整数文字列でない場合、該当のエラーメッセージを返す。', () => {
-            const floatValSeconds = { startTime: { seconds: 1.1 } };
-            assert(hasTargetError(validateSchedule(floatValSeconds), err));
-
-            const strFloatValSeconds = { startTime: { seconds: '1.1' } };
-            assert(hasTargetError(validateSchedule(strFloatValSeconds), err));
-
-            const NaNValSeconds = { startTime: { seconds: NaN } };
-            assert(hasTargetError(validateSchedule(NaNValSeconds), err));
-
-            const strValSeconds = { startTime: { seconds: 'hoge' } };
-            assert(hasTargetError(validateSchedule(strValSeconds), err));
-
-            const emptyStrValSeconds = { startTime: { seconds: '' } };
-            assert(hasTargetError(validateSchedule(emptyStrValSeconds), err));
-
-            const boolValSeconds = { startTime: { seconds: true } };
-            assert(hasTargetError(validateSchedule(boolValSeconds), err));
-
-            const objValSeconds = { startTime: { seconds: {} } };
-            assert(hasTargetError(validateSchedule(objValSeconds), err));
-
-            const undefinedValSeconds = { startTime: { seconds: undefined } };
-            assert(hasTargetError(validateSchedule(undefinedValSeconds), err));
-
-            const nullValSeconds = { startTime: { seconds: null } };
-            assert(hasTargetError(validateSchedule(nullValSeconds), err));
-          });
-        });
-
-        describe('値の範囲チェック', () => {
-          const lessErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MIN_LESS;
-          const overErr = ERROR.SCHEDULE_STARTTIME_SECONDS_MAX_OVER;
-          const minSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MIN;
-          const maxSeconds = CONST_SET_CRONS.STARTTIME_SECONDS_RANGE_MAX;
-
-          it('既定範囲内の場合、該当のエラーメッセージは返さない。', () => {
-            const minValSeconds = { startTime: { seconds: minSeconds } };
-            assert(!hasTargetError(validateSchedule(minValSeconds), lessErr));
-            assert(!hasTargetError(validateSchedule(minValSeconds), overErr));
-
-            const maxValSeconds = { startTime: { seconds: maxSeconds } };
-            assert(!hasTargetError(validateSchedule(maxValSeconds), lessErr));
-            assert(!hasTargetError(validateSchedule(maxValSeconds), overErr));
-
-            const strMinValSeconds = { startTime: { seconds: `${minSeconds}` } };
-            assert(!hasTargetError(validateSchedule(strMinValSeconds), lessErr));
-            assert(!hasTargetError(validateSchedule(strMinValSeconds), overErr));
-
-            const strMaxValSeconds = { startTime: { seconds: `${maxSeconds}` } };
-            assert(!hasTargetError(validateSchedule(strMaxValSeconds), lessErr));
-            assert(!hasTargetError(validateSchedule(strMaxValSeconds), overErr));
-          });
-
-          it('既定範囲未満の場合、該当のエラーメッセージを返す。', () => {
-            const lessSeconds = minSeconds - 1;
-
-            const minLessValSeconds = { startTime: { seconds: lessSeconds } };
-            assert(hasTargetError(validateSchedule(minLessValSeconds), lessErr));
-
-            const strMinLessValSeconds = { startTime: { seconds: `${lessSeconds}` } };
-            assert(hasTargetError(validateSchedule(strMinLessValSeconds), lessErr));
-          });
-
-          it('既定範囲超過の場合、該当のエラーメッセージを返す。', () => {
-            const overSeconds = maxSeconds + 1;
-
-            const maxOverValSeconds = { startTime: { seconds: overSeconds } };
-            assert(hasTargetError(validateSchedule(maxOverValSeconds), overErr));
-
-            const strMaxOverValSeconds = { startTime: { seconds: `${overSeconds}` } };
-            assert(hasTargetError(validateSchedule(strMaxOverValSeconds), overErr));
-          });
-        });
-      });
     });
   });
+
 });
