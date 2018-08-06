@@ -204,6 +204,9 @@ describe('Util', () => {
           const strValRecTime = { recTime: 'hoge' };
           assert(hasTargetError(validateSchedule(strValRecTime), err));
 
+          const emptyStrValRecTime = { recTime: '' };
+          assert(hasTargetError(validateSchedule(emptyStrValRecTime), err));
+
           const boolValRecTime = { recTime: true };
           assert(hasTargetError(validateSchedule(boolValRecTime), err));
 
@@ -777,6 +780,9 @@ describe('Util', () => {
             const strValHours = { startTime: { hours: 'hoge' } };
             assert(hasTargetError(validateSchedule(strValHours), err));
 
+            const emptyStrValHours = { startTime: { hours: '' } };
+            assert(hasTargetError(validateSchedule(emptyStrValHours), err));
+
             const boolValHours = { startTime: { hours: true } };
             assert(hasTargetError(validateSchedule(boolValHours), err));
 
@@ -887,6 +893,9 @@ describe('Util', () => {
 
             const strValMinutes = { startTime: { minutes: 'hoge' } };
             assert(hasTargetError(validateSchedule(strValMinutes), err));
+
+            const emptyStrValMinutes = { startTime: { minutes: '' } };
+            assert(hasTargetError(validateSchedule(emptyStrValMinutes), err));
 
             const boolValMinutes = { startTime: { minutes: true } };
             assert(hasTargetError(validateSchedule(boolValMinutes), err));
@@ -999,6 +1008,9 @@ describe('Util', () => {
 
             const strValSeconds = { startTime: { seconds: 'hoge' } };
             assert(hasTargetError(validateSchedule(strValSeconds), err));
+
+            const emptyStrValSeconds = { startTime: { seconds: '' } };
+            assert(hasTargetError(validateSchedule(emptyStrValSeconds), err));
 
             const boolValSeconds = { startTime: { seconds: true } };
             assert(hasTargetError(validateSchedule(boolValSeconds), err));
