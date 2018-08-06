@@ -72,19 +72,40 @@ export function validateSchedule(schedule) {
       return [ ERROR.SCHEDULE_SOURCE_INVALID_TYPE ];
     }
 
-    const err = [];
-
     if (!/^rtmp:\/\/.*$/.test(source)
       && CONST_SET_CRONS.SOURCE_TYPE.indexOf(source) === -1) {
-      err.push(ERROR.SCHEDULE_SOURCE_INVALID_VAL);
+      return [ ERROR.SCHEDULE_SOURCE_INVALID_VAL ];
     }
 
-    return err;
+    return [];
+  };
+
+  const validateScheduleRecTime = (schedule) => {
+    if (!schedule.hasOwnProperty('recTime')) {
+      return [ ERROR.SCHEDULE_RECTIME_NOT_EXIST ];
+    }
+
+    const recTime = Number(String(schedule.recTime));
+
+    if (Number.isNaN(recTime) || !Number.isInteger(recTime)) {
+      return [ ERROR.SCHEDULE_RECTIME_INVALID_VAL ];
+    }
+
+    if (recTime < CONST_SET_CRONS.RECTIME_RANGE_MIN) {
+      return [ ERROR.SCHEDULE_RECTIME_MIN_LESS ];
+    }
+
+    if (recTime > CONST_SET_CRONS.RECTIME_RANGE_MAX) {
+      return [ ERROR.SCHEDULE_RECTIME_MAX_OVER ];
+    }
+
+    return [];
   };
 
   const error = [].concat(
     validateScheduleTitle(schedule),
     validateScheduleSource(schedule),
+    validateScheduleRecTime(schedule),
   );
 
   return error;
