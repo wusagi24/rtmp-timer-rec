@@ -2,30 +2,12 @@ import * as CONST_SET_CRONS from './const/setCrons';
 import * as ERROR from './const/error';
 
 /**
- * @typedef {Object} CronTime
- * @property {number|string} dayOfWeek
- * @property {number|string} month
- * @property {number|string} date
- * @property {number|string} hours
- * @property {number|string} minutes
- * @property {number|string} seconds
- */
-
-/**
- * @typedef {Object} Schedule
- * @property {string} title
- * @property {string} source
- * @property {number} recTime
- * @property {CronTime} startTime
- */
-
-/**
- * @param {CronTime} cronTime
+ * @param {Object} cronTime
  * @return {string[]}
  */
 export function validateCronTime(cronTime) {
   /**
-   * @param {CronTime.dayOfWeek} dayOfWeek
+   * @param {*} dayOfWeek
    * @return {string[]}
    */
   const validateCronTimeDayOfWeek = (dayOfWeek) => {
@@ -57,7 +39,7 @@ export function validateCronTime(cronTime) {
   };
 
   /**
-   * @param {CronTime.month} month
+   * @param {*} month
    * @return {string[]}
    */
   const validateCronTimeMonth = (month) => {
@@ -89,7 +71,7 @@ export function validateCronTime(cronTime) {
   };
 
   /**
-   * @param {CronTime.date} date
+   * @param {*} date
    * @return {string[]}
    */
   const validateCronTimeDate = (date) => {
@@ -121,7 +103,7 @@ export function validateCronTime(cronTime) {
   };
 
   /**
-   * @param {CronTime.hours} hours
+   * @param {*} hours
    * @return {string[]}
    */
   const validateCronTimeHours = (hours) => {
@@ -145,7 +127,7 @@ export function validateCronTime(cronTime) {
   };
 
   /**
-   * @param {CronTime.minutes} minutes
+   * @param {*} minutes
    * @return {string[]}
    */
   const validateCronTimeMinutes = (minutes) => {
@@ -169,7 +151,7 @@ export function validateCronTime(cronTime) {
   };
 
   /**
-   * @param {CronTime.seconds} seconds
+   * @param {*} seconds
    * @return {string[]}
    */
   const validateCronTimeSeconds = (seconds) => {
@@ -238,12 +220,12 @@ export function validateCronTime(cronTime) {
 /**
  * スケジュールデータのバリデーション
  *
- * @param {Schedule} schedule
+ * @param {Object} schedule
  * @return {string[]}
  */
 export function validateSchedule(schedule) {
   /**
-   * @param {Schedule.title} title
+   * @param {*} title
    * @return {string[]}
    */
   const validateScheduleTitle = (title) => {
@@ -255,7 +237,7 @@ export function validateSchedule(schedule) {
   };
 
   /**
-   * @param {Schedule.source} source
+   * @param {*} source
    * @return {string[]}
    */
   const validateScheduleSource = (source) => {
@@ -272,7 +254,7 @@ export function validateSchedule(schedule) {
   };
 
   /**
-   * @param {Schedule.recTime} recTime
+   * @param {*} recTime
    * @return {string[]}
    */
   const validateScheduleRecTime = (recTime) => {
