@@ -47,7 +47,24 @@ export function loadLocalJsonData(path) {
  * @return {string[]}
  */
 export function validateSchedule(schedule) {
-  const error = null;
+  const validateScheduleTitle = (schedule) => {
+    if (!schedule.hasOwnProperty('title')) {
+      return [ ERROR.SCHEDULE_TITLE_NOT_EXIST ];
+    }
+
+    const { title } = schedule;
+
+    if (typeof title !== 'string') {
+      return [ ERROR.SCHEDULE_TITLE_INVALID_TYPE ];
+    }
+
+    return [];
+  };
+
+  const error = [].concat(
+    validateScheduleTitle(schedule),
+  );
+
   return error;
 }
 
