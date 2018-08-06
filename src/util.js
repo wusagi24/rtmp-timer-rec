@@ -5,6 +5,8 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
+import { validateSchedule } from './validate';
+import { default as ERROR_TEXT } from './const/text/error';
 
 /**
  * @typedef {Object} CronTime
@@ -49,6 +51,25 @@ export function loadLocalJsonData(path) {
 export async function getSchedules() {
   const schedulesDataPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
   const schedules = await loadLocalJsonData(schedulesDataPath);
+
+  const errors = schedules.reduce((errs, schedule, index) => {
+    const err = validateSchedule(schedule);
+
+    if (err.length > 0) {
+      const errTitle = `Error schedule index ${index + 1}`;
+      const errDetail = err.map((e) => {
+        return `  ${ERROR_TEXT[e]}`;
+      }).join('\n');
+
+      errs.push(`\n${errTitle}\n${errDetail}`);
+    }
+
+    return errs;
+  }, []);
+
+  if (errors.length > 0) {
+    throw(Error(errors.join('\n')));
+  }
 
   return schedules;
 }
