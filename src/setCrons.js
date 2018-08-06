@@ -13,20 +13,19 @@ import { getSchedules } from './util';
 
 
 /**
-* @typedef {object} CronTime
-* @property {number|string} startTime.dayOfWeek
-* @property {number|string} startTime.month
-* @property {number|string} startTime.date
-* @property {number|string} startTime.hours
-* @property {number|string} startTime.minutes
-* @property {number|string} startTime.seconds
+ * @typedef {Object} CronTime
+ * @property {number|string} dayOfWeek
+ * @property {number|string} month
+ * @property {number|string} date
+ * @property {number|string} hours
+ * @property {number|string} minutes
+ * @property {number|string} seconds
  */
 
 /**
- * @typedef {object} Schedule
+ * @typedef {Object} Schedule
  * @property {string} title
- * @property {number} sourceType
- * @property {string} [url]
+ * @property {string} source
  * @property {number} recTime
  * @property {CronTime} startTime
  */
