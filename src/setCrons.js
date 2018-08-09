@@ -11,15 +11,14 @@ import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
 import { getSchedules } from './util';
 
-
 /**
  * @typedef {Object} CronTime
  * @property {number|string} dayOfWeek
  * @property {number|string} month
  * @property {number|string} date
- * @property {number|string} hours
- * @property {number|string} minutes
- * @property {number|string} seconds
+ * @property {number} hours
+ * @property {number} minutes
+ * @property {number} seconds
  */
 
 /**
