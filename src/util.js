@@ -5,20 +5,25 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
+import { validateSchedule } from './validate';
+import { default as ERROR_TEXT } from './const/text/error';
+
+/**
+ * @typedef {Object} CronTime
+ * @property {number|string} dayOfWeek
+ * @property {number|string} month
+ * @property {number|string} date
+ * @property {number|string} hours
+ * @property {number|string} minutes
+ * @property {number|string} seconds
+ */
 
 /**
  * @typedef {Object} Schedule
  * @property {string} title
- * @property {number} sourceType
- * @property {string} [url]
+ * @property {string} source
  * @property {number} recTime
- * @property {Object} startTime
- * @property {number|string} startTime.dayOfWeek
- * @property {number|string} startTime.month
- * @property {number|string} startTime.date
- * @property {number|string} startTime.hours
- * @property {number|string} startTime.minutes
- * @property {number|string} startTime.seconds
+ * @property {CronTime} startTime
  */
 
 /**
@@ -46,6 +51,25 @@ export function loadLocalJsonData(path) {
 export async function getSchedules() {
   const schedulesDataPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
   const schedules = await loadLocalJsonData(schedulesDataPath);
+
+  const errors = schedules.reduce((errs, schedule, index) => {
+    const err = validateSchedule(schedule);
+
+    if (err.length > 0) {
+      const errTitle = `Error schedule index ${index + 1}`;
+      const errDetail = err.map((e) => {
+        return `  ${ERROR_TEXT[e]}`;
+      }).join('\n');
+
+      errs.push(`\n${errTitle}\n${errDetail}`);
+    }
+
+    return errs;
+  }, []);
+
+  if (errors.length > 0) {
+    throw(Error(errors.join('\n')));
+  }
 
   return schedules;
 }
