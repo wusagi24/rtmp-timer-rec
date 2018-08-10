@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
-import { validateSchedule } from './validate';
+import { validateInputSchedule } from './validate';
 import { default as ERROR_TEXT } from './const/text/error';
 
 /**
@@ -53,7 +53,7 @@ export async function getSchedules() {
   const schedules = await loadLocalJsonData(schedulesDataPath);
 
   const errors = schedules.reduce((errs, schedule, index) => {
-    const err = validateSchedule(schedule);
+    const err = validateInputSchedule(schedule);
 
     if (err.length > 0) {
       const errTitle = `Error schedule index ${index + 1}`;
