@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
+import { WILDCARD_CHAR } from './const/setCrons';
 import { validateInputSchedule } from './validate';
 import { default as ERROR_TEXT } from './const/text/error';
 
@@ -41,6 +42,41 @@ export function loadLocalJsonData(path) {
       return resolve(obj);
     });
   });
+}
+
+/**
+ * @param {Object} schedule
+ * @return {Schedule}
+ */
+export function formatSchedule(schedule) {
+  const title = schedule.title;
+  const source = schedule.source;
+  const recTime = Number.parseInt(schedule.recTime);
+
+  const { startTime } = schedule;
+  const dayOfWeek = (startTime.dayOfWeek === WILDCARD_CHAR)
+    ? startTime.dayOfWeek : Number.parseInt(startTime.dayOfWeek);
+  const month = (startTime.month === WILDCARD_CHAR)
+    ? startTime.month : Number.parseInt(startTime.month);
+  const date = (startTime.date === WILDCARD_CHAR)
+    ? startTime.date : Number.parseInt(startTime.date);
+  const hours = Number.parseInt(startTime.hours);
+  const minutes = Number.parseInt(startTime.minutes);
+  const seconds = Number.parseInt(startTime.seconds);
+
+  return {
+    title,
+    source,
+    recTime,
+    startTime: {
+      dayOfWeek,
+      month,
+      date,
+      hours,
+      minutes,
+      seconds,
+    },
+  };
 }
 
 /**
