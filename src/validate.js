@@ -2,15 +2,17 @@ import * as CONST_SET_CRONS from './const/setCrons';
 import * as ERROR from './const/error';
 
 /**
+ * 入力される CronTime データのバリデーション
+ *
  * @param {Object} cronTime
  * @return {string[]}
  */
-export function validateCronTime(cronTime) {
+export function validateInputCronTime(cronTime) {
   /**
    * @param {*} dayOfWeek
    * @return {string[]}
    */
-  const validateCronTimeDayOfWeek = (dayOfWeek) => {
+  const validateInputCronTimeDayOfWeek = (dayOfWeek) => {
     if (typeof dayOfWeek !== 'string' && !Number.isInteger(dayOfWeek)) {
       return [ ERROR.SCHEDULE_STARTTIME_DAYOFWEEK_INVALID_TYPE ];
     }
@@ -42,7 +44,7 @@ export function validateCronTime(cronTime) {
    * @param {*} month
    * @return {string[]}
    */
-  const validateCronTimeMonth = (month) => {
+  const validateInputCronTimeMonth = (month) => {
     if (typeof month !== 'string' && !Number.isInteger(month)) {
       return [ ERROR.SCHEDULE_STARTTIME_MONTH_INVALID_TYPE ];
     }
@@ -74,7 +76,7 @@ export function validateCronTime(cronTime) {
    * @param {*} date
    * @return {string[]}
    */
-  const validateCronTimeDate = (date) => {
+  const validateInputCronTimeDate = (date) => {
     if (typeof date !== 'string' && !Number.isInteger(date)) {
       return [ ERROR.SCHEDULE_STARTTIME_DATE_INVALID_TYPE ];
     }
@@ -106,7 +108,7 @@ export function validateCronTime(cronTime) {
    * @param {*} hours
    * @return {string[]}
    */
-  const validateCronTimeHours = (hours) => {
+  const validateInputCronTimeHours = (hours) => {
     const numHours = Number(String(hours));
 
     if (hours === '' || !Number.isInteger(numHours)) {
@@ -130,7 +132,7 @@ export function validateCronTime(cronTime) {
    * @param {*} minutes
    * @return {string[]}
    */
-  const validateCronTimeMinutes = (minutes) => {
+  const validateInputCronTimeMinutes = (minutes) => {
     const numMinutes = Number(String(minutes));
 
     if (minutes === '' || !Number.isInteger(numMinutes)) {
@@ -154,7 +156,7 @@ export function validateCronTime(cronTime) {
    * @param {*} seconds
    * @return {string[]}
    */
-  const validateCronTimeSeconds = (seconds) => {
+  const validateInputCronTimeSeconds = (seconds) => {
     const numSeconds = Number(String(seconds));
 
     if (seconds === '' || !Number.isInteger(numSeconds)) {
@@ -177,11 +179,11 @@ export function validateCronTime(cronTime) {
   const error = [];
 
   if (cronTime.hasOwnProperty('dayOfWeek')) {
-    error.push(...validateCronTimeDayOfWeek(cronTime.dayOfWeek));
+    error.push(...validateInputCronTimeDayOfWeek(cronTime.dayOfWeek));
   }
 
   if (cronTime.hasOwnProperty('month')) {
-    error.push(...validateCronTimeMonth(cronTime.month));
+    error.push(...validateInputCronTimeMonth(cronTime.month));
   } else {
     if (cronTime.hasOwnProperty('date')) {
       error.push(ERROR.SCHEDULE_STARTTIME_MONTH_NOT_EXIST);
@@ -189,7 +191,7 @@ export function validateCronTime(cronTime) {
   }
 
   if (cronTime.hasOwnProperty('date')) {
-    error.push(...validateCronTimeDate(cronTime.date));
+    error.push(...validateInputCronTimeDate(cronTime.date));
   } else {
     if (cronTime.hasOwnProperty('month')) {
       error.push(ERROR.SCHEDULE_STARTTIME_DATE_NOT_EXIST);
@@ -197,19 +199,19 @@ export function validateCronTime(cronTime) {
   }
 
   if (cronTime.hasOwnProperty('hours')) {
-    error.push(...validateCronTimeHours(cronTime.hours));
+    error.push(...validateInputCronTimeHours(cronTime.hours));
   } else {
     error.push(ERROR.SCHEDULE_STARTTIME_HOURS_NOT_EXIST);
   }
 
   if (cronTime.hasOwnProperty('minutes')) {
-    error.push(...validateCronTimeMinutes(cronTime.minutes));
+    error.push(...validateInputCronTimeMinutes(cronTime.minutes));
   } else {
     error.push(ERROR.SCHEDULE_STARTTIME_MINUTES_NOT_EXIST);
   }
 
   if (cronTime.hasOwnProperty('seconds')) {
-    error.push(...validateCronTimeSeconds(cronTime.seconds));
+    error.push(...validateInputCronTimeSeconds(cronTime.seconds));
   } else {
     error.push(ERROR.SCHEDULE_STARTTIME_SECONDS_NOT_EXIST);
   }
@@ -218,17 +220,17 @@ export function validateCronTime(cronTime) {
 }
 
 /**
- * スケジュールデータのバリデーション
+ * 入力されるスケジュールデータのバリデーション
  *
  * @param {Object} schedule
  * @return {string[]}
  */
-export function validateSchedule(schedule) {
+export function validateInputSchedule(schedule) {
   /**
    * @param {*} title
    * @return {string[]}
    */
-  const validateScheduleTitle = (title) => {
+  const validateInputScheduleTitle = (title) => {
     if (typeof title !== 'string') {
       return [ ERROR.SCHEDULE_TITLE_INVALID_TYPE ];
     }
@@ -240,7 +242,7 @@ export function validateSchedule(schedule) {
    * @param {*} source
    * @return {string[]}
    */
-  const validateScheduleSource = (source) => {
+  const validateInputScheduleSource = (source) => {
     if (typeof source !== 'string') {
       return [ ERROR.SCHEDULE_SOURCE_INVALID_TYPE ];
     }
@@ -257,7 +259,7 @@ export function validateSchedule(schedule) {
    * @param {*} recTime
    * @return {string[]}
    */
-  const validateScheduleRecTime = (recTime) => {
+  const validateInputScheduleRecTime = (recTime) => {
     const numRecTime = Number(String(recTime));
 
     if (recTime === ''
@@ -280,25 +282,25 @@ export function validateSchedule(schedule) {
   const error = [];
 
   if (schedule.hasOwnProperty('title')) {
-    error.push(...validateScheduleTitle(schedule.title));
+    error.push(...validateInputScheduleTitle(schedule.title));
   } else {
     error.push(ERROR.SCHEDULE_TITLE_NOT_EXIST);
   }
 
   if (schedule.hasOwnProperty('source')) {
-    error.push(...validateScheduleSource(schedule.source));
+    error.push(...validateInputScheduleSource(schedule.source));
   } else {
     error.push(ERROR.SCHEDULE_SOURCE_NOT_EXIST);
   }
 
   if (schedule.hasOwnProperty('recTime')) {
-    error.push(...validateScheduleRecTime(schedule.recTime));
+    error.push(...validateInputScheduleRecTime(schedule.recTime));
   } else {
     error.push(ERROR.SCHEDULE_RECTIME_NOT_EXIST);
   }
 
   if (schedule.hasOwnProperty('startTime')) {
-    error.push(...validateCronTime(schedule.startTime));
+    error.push(...validateInputCronTime(schedule.startTime));
   } else {
     error.push(ERROR.SCHEDULE_STARTTIME_NOT_EXIST);
   }
