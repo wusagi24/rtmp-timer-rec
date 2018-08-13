@@ -7,6 +7,7 @@ import path from 'path';
 import * as CONST from '../src/const/common';
 import * as CONFIG from '../config/config.json';
 import * as TEST_CONST from './const';
+import { WILDCARD_CHAR } from '../src/const/setCrons';
 import { loadLocalJsonData, formatSchedule, fetchXmlStr, parseXml } from '../src/util';
 
 const DUMMY_DATA_DIR_PATH = path.join(path.resolve(''), CONST.TEST_DIR, TEST_CONST.DUMMY_DATA_DIR);
@@ -51,27 +52,27 @@ describe('Util', () => {
 
       assert.strictEqual(formattedSchedule.source, inputSchedule.source);
 
-      const parseRecTime = Number.parseInt(inputSchedule.recTime);
-      assert.strictEqual(formattedSchedule.recTime, parseRecTime);
+      const intRecTime = 30;
+      assert.strictEqual(formattedSchedule.recTime, intRecTime);
 
       const formattedStartTime = formattedSchedule.startTime;
 
-      assert.strictEqual(formattedStartTime.dayOfWeek, inputSchedule.startTime.dayOfWeek);
+      assert.strictEqual(formattedStartTime.dayOfWeek, WILDCARD_CHAR);
 
-      const parseMonth = Number.parseInt(inputSchedule.startTime.month);
-      assert.strictEqual(formattedStartTime.month, parseMonth);
+      const intMonth = 10;
+      assert.strictEqual(formattedStartTime.month, intMonth);
 
-      const parseDate = Number.parseInt(inputSchedule.startTime.date);
-      assert.strictEqual(formattedStartTime.date, parseDate);
+      const intDate = 26;
+      assert.strictEqual(formattedStartTime.date, intDate);
 
-      const parseHours = Number.parseInt(inputSchedule.startTime.hours);
-      assert.strictEqual(formattedStartTime.hours, parseHours);
+      const intHours = 8;
+      assert.strictEqual(formattedStartTime.hours, intHours);
 
-      const parseMinutes = Number.parseInt(inputSchedule.startTime.minutes);
-      assert.strictEqual(formattedStartTime.minutes, parseMinutes);
+      const intMinutes = 12;
+      assert.strictEqual(formattedStartTime.minutes, intMinutes);
 
-      const parseSeconds = Number.parseInt(inputSchedule.startTime.seconds);
-      assert.strictEqual(formattedStartTime.seconds, parseSeconds);
+      const intSeconds = 0;
+      assert.strictEqual(formattedStartTime.seconds, intSeconds);
     });
   });
 
