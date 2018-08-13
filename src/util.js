@@ -110,22 +110,31 @@ export function formatSchedule(schedule) {
  */
 export async function getSchedules() {
   const schedulesDataPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
-  const schedules = await loadLocalJsonData(schedulesDataPath);
+  const loadSchedules = await loadLocalJsonData(schedulesDataPath);
 
-  const errors = schedules.reduce((errs, schedule, index) => {
-    const err = validateInputSchedule(schedule);
+  const { errors, schedules } = loadSchedules.reduce(
+    ({ errors, schedules }, schedule, index) => {
+      const err = validateInputSchedule(schedule);
 
-    if (err.length > 0) {
+      if (err.length === 0) {
+        return {
+          errors,
+          schedules: schedules.concat([ formatSchedule(schedule) ]),
+        };
+      }
+
       const errTitle = `Error schedule index ${index + 1}`;
       const errDetail = err.map((e) => {
         return `  ${ERROR_TEXT[e]}`;
       }).join('\n');
 
-      errs.push(`\n${errTitle}\n${errDetail}`);
-    }
-
-    return errs;
-  }, []);
+      return {
+        errors: errors.concat([ `\n${errTitle}\n${errDetail}` ]),
+        schedules: schedules.concat([ schedule ]),
+      };
+    },
+    { errors: [], schedules: [] }
+  );
 
   if (errors.length > 0) {
     throw(Error(errors.join('\n')));
