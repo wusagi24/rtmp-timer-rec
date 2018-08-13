@@ -45,6 +45,8 @@ export function loadLocalJsonData(path) {
 }
 
 /**
+ * schedule データを整形する
+ *
  * @param {Object} schedule
  * @return {Schedule}
  */
@@ -54,12 +56,34 @@ export function formatSchedule(schedule) {
   const recTime = Number.parseInt(schedule.recTime);
 
   const { startTime } = schedule;
-  const dayOfWeek = (startTime.dayOfWeek === WILDCARD_CHAR)
-    ? startTime.dayOfWeek : Number.parseInt(startTime.dayOfWeek);
-  const month = (startTime.month === WILDCARD_CHAR)
-    ? startTime.month : Number.parseInt(startTime.month);
-  const date = (startTime.date === WILDCARD_CHAR)
-    ? startTime.date : Number.parseInt(startTime.date);
+
+  const dayOfWeek = ((sTime) => {
+    if (!sTime.hasOwnProperty('dayOfWeek')
+      || sTime.dayOfWeek === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.dayOfWeek);
+  })(startTime);
+
+  const month = ((sTime) => {
+    if (!sTime.hasOwnProperty('month')
+      || sTime.month === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.month);
+  })(startTime);
+
+  const date = ((sTime) => {
+    if (!sTime.hasOwnProperty('date')
+      || sTime.date === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.date);
+  })(startTime);
+
   const hours = Number.parseInt(startTime.hours);
   const minutes = Number.parseInt(startTime.minutes);
   const seconds = Number.parseInt(startTime.seconds);
