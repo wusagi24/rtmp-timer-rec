@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
 import * as CONST from './const/common';
+import { WILDCARD_CHAR } from './const/setCrons';
 import { validateInputSchedule } from './validate';
 import { default as ERROR_TEXT } from './const/text/error';
 
@@ -44,28 +45,96 @@ export function loadLocalJsonData(path) {
 }
 
 /**
+ * schedule データを整形する
+ *
+ * @param {Object} schedule
+ * @return {Schedule}
+ */
+export function formatSchedule(schedule) {
+  const title = schedule.title;
+  const source = schedule.source;
+  const recTime = Number.parseInt(schedule.recTime);
+
+  const { startTime } = schedule;
+
+  const dayOfWeek = ((sTime) => {
+    if (!sTime.hasOwnProperty('dayOfWeek')
+      || sTime.dayOfWeek === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.dayOfWeek);
+  })(startTime);
+
+  const month = ((sTime) => {
+    if (!sTime.hasOwnProperty('month')
+      || sTime.month === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.month);
+  })(startTime);
+
+  const date = ((sTime) => {
+    if (!sTime.hasOwnProperty('date')
+      || sTime.date === WILDCARD_CHAR) {
+      return WILDCARD_CHAR;
+    }
+
+    return Number.parseInt(sTime.date);
+  })(startTime);
+
+  const hours = Number.parseInt(startTime.hours);
+  const minutes = Number.parseInt(startTime.minutes);
+  const seconds = Number.parseInt(startTime.seconds);
+
+  return {
+    title,
+    source,
+    recTime,
+    startTime: {
+      dayOfWeek,
+      month,
+      date,
+      hours,
+      minutes,
+      seconds,
+    },
+  };
+}
+
+/**
  * Cron のスケジュールデータを取得する
  *
  * @return {Schedule[]}
  */
 export async function getSchedules() {
   const schedulesDataPath = path.join(path.resolve(''), CONST.CONFIG_DIR, CONST.SCHEDULES_DATA);
-  const schedules = await loadLocalJsonData(schedulesDataPath);
+  const loadSchedules = await loadLocalJsonData(schedulesDataPath);
 
-  const errors = schedules.reduce((errs, schedule, index) => {
-    const err = validateInputSchedule(schedule);
+  const { errors, schedules } = loadSchedules.reduce(
+    ({ errors, schedules }, schedule, index) => {
+      const err = validateInputSchedule(schedule);
 
-    if (err.length > 0) {
+      if (err.length === 0) {
+        return {
+          errors,
+          schedules: schedules.concat([ formatSchedule(schedule) ]),
+        };
+      }
+
       const errTitle = `Error schedule index ${index + 1}`;
       const errDetail = err.map((e) => {
         return `  ${ERROR_TEXT[e]}`;
       }).join('\n');
 
-      errs.push(`\n${errTitle}\n${errDetail}`);
-    }
-
-    return errs;
-  }, []);
+      return {
+        errors: errors.concat([ `\n${errTitle}\n${errDetail}` ]),
+        schedules: schedules.concat([ schedule ]),
+      };
+    },
+    { errors: [], schedules: [] }
+  );
 
   if (errors.length > 0) {
     throw(Error(errors.join('\n')));
