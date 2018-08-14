@@ -5,8 +5,6 @@
     "recTime": 1,
     "startTime": {
       "dayOfWeek": 2,
-      "month": "*",
-      "date": "*",
       "hours": 23,
       "minutes": 46,
       "seconds": 0
@@ -17,9 +15,8 @@
     "source": "agqr",
     "recTime": 1,
     "startTime": {
-      "dayOfWeek": 2,
-      "month": "*",
-      "date": "*",
+      "month": 8,
+      "date": 14,
       "hours": 23,
       "minutes": 49,
       "seconds": 0
