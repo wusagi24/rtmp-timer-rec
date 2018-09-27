@@ -12,30 +12,28 @@ const rtmpdumpExePath = path.join(libsDirPath, CONST.RTMP_EXE);
  * RTMPDump の js ラッパー
  *
  * @param {?Object<string, string|null>} cmdArgs コマンド引数
- * @param {?(chunk: any) => void} stdout 標準出力の listener
- * @param {?(chunk: any) => void} stderr 標準エラーの listener
- * @param {?(code: number, signal: string) => void} close コマンド終了の listener
+ * @param {?{ stdout: (chunk: any) => void, stderr: (chunk: any) => void, close: (code: number, signal: string) => void }} listeners
  * @return {ChildProcess} ChildProcess
  */
-export function rtmpdump(cmdArgs = {}, stdout = null, stderr = null, close = null) {
+export function rtmpdump(cmdArgs = {}, listeners = {}) {
   const argsList = Object.entries(cmdArgs).reduce((args, arg) => args.concat(arg), []);
 
-  const listenerStdout = (stdout)
-    ? stdout
+  const listenerStdout = (listeners.stdout)
+    ? listeners.stdout
     : (data) => {
       /* eslint-disable no-console */
       console.log(`${data}`);
       /* eslint-enable no-console */
     };
-  const listenerStderr = (stderr)
-    ? stderr
+  const listenerStderr = (listeners.stderr)
+    ? listeners.stderr
     : (data) => {
       /* eslint-disable no-console */
       console.log(`${data}`);
       /* eslint-enable no-console */
     };
-  const listenerClose = (close)
-    ? close
+  const listenerClose = (listeners.close)
+    ? listeners.close
     : (data) => {
       /* eslint-disable no-console */
       console.log(`rtmpdump process exited with code ${data}`);
