@@ -9,6 +9,7 @@ import * as CONFIG from '../config/config.json';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
+import ffmpeg from './ffmpeg';
 import { getSchedules } from './util';
 
 /**
@@ -48,21 +49,38 @@ function execJob(source, startTime, recTime, title) {
   const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
   const datetime = `${recMoment.format('YYYYMMDD')}${hour}${minute}`;
 
-  const output = path.format({
+  const flvOutput = path.format({
     dir: downloadDirPath,
     name: `${title}_${datetime}`,
     ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
-  const args = {
+  const rtmpArgs = {
     '--rtmp': `${source}`,
     '--live': null,
     '--realtime': null,
-    '--flv': `"${output}"`,
+    '--flv': `"${flvOutput}"`,
     '--stop': `${recTime}`,
   };
 
-  rtmpdump(args);
+  const convEncode = () => {
+    const encodeExt = 'mp4';
+    const encodedFilename = `${title}_${datetime}.${encodeExt}`;
+
+    const ffmgArgs = {
+      '-i': `"${flvOutput}"`,
+      '-vcodec': 'libx264',
+      '-acodec': 'aac',
+    };
+
+    ffmpeg(encodedFilename, ffmgArgs);
+  };
+
+  rtmpdump(rtmpArgs, {
+    close: (code) => {
+      if (code === 0) convEncode();
+    }
+  });
 }
 
 /**

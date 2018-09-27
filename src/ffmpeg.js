@@ -11,12 +11,13 @@ const ffmpegExePath = path.join(libsDirPath, CONST.FFMPEG_EXE);
 /**
  * FFmpeg の js ラッパー
  *
- * @param {?Object<string, string|null>} cmdArgs コマンド引数
+ * @param {string} output 出力ファイル名
+ * @param {?Object<string, string|null>} options コマンドオプション
  * @param {?{ stdout: (chunk: any) => void, stderr: (chunk: any) => void, close: (code: number, signal: string) => void }} listeners
  * @return {ChildProcess} ChildProcess
  */
-export function ffmpeg(cmdArgs = {}, listeners = {}) {
-  const argsList = Object.entries(cmdArgs).reduce((args, arg) => args.concat(arg), []);
+export function ffmpeg(output, options = {}, listeners = {}) {
+  const optList = Object.entries(options).reduce((args, arg) => args.concat(arg), []);
 
   const listenerStdout = (listeners.stdout)
     ? listeners.stdout
@@ -40,7 +41,7 @@ export function ffmpeg(cmdArgs = {}, listeners = {}) {
       /* eslint-enable no-console */
     };
 
-  const ffmg = spawn(ffmpegExePath, argsList, { shell: true });
+  const ffmg = spawn(ffmpegExePath, optList.concat([`${output}`]), { shell: true });
 
   ffmg.stdout.on('data', listenerStdout);
   ffmg.stderr.on('data', listenerStderr);
