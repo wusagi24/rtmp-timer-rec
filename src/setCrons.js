@@ -49,9 +49,11 @@ function execJob(source, startTime, recTime, title) {
   const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
   const datetime = `${recMoment.format('YYYYMMDD')}${hour}${minute}`;
 
+  const outputFilename = `${title}_${datetime}`;
+
   const flvOutput = path.format({
     dir: downloadDirPath,
-    name: `${title}_${datetime}`,
+    name: outputFilename,
     ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
@@ -63,22 +65,44 @@ function execJob(source, startTime, recTime, title) {
     '--stop': `${recTime}`,
   };
 
-  const convEncode = () => {
-    const encodeExt = 'mp4';
-    const encodedFilename = `${title}_${datetime}.${encodeExt}`;
+  /**
+   * @param {string} inputFile
+   * @param {?string} outDir
+   * @param {?string} outName
+   */
+  function convEncodeMP4(inputFile, outDir = null, outName = null) {
+    const { dir, name } = path.parse(inputFile);
+
+    const encodedFilePath = path.format({
+      dir: (outDir) ? outDir : dir,
+      name: (outName) ? outName : name,
+      ext: `.${CONST.MP4_EXT}`,
+    });
 
     const ffmgArgs = {
-      '-i': `"${flvOutput}"`,
+      '-i': `"${inputFile}"`,
       '-vcodec': 'libx264',
       '-acodec': 'aac',
     };
 
-    ffmpeg(encodedFilename, ffmgArgs);
-  };
+    ffmpeg(encodedFilePath, ffmgArgs);
+  }
+
+  /**
+   * @param {string} inputFile
+   * @param {?string} type
+   * @param {string} outDir
+   * @param {string} outName
+   */
+  function convEncode(inputFile, type = CONST.MP4_EXT, outDir = null, outName = null) {
+    if (type === CONST.MP4_EXT) {
+      convEncodeMP4(inputFile, outDir, outName);
+    }
+  }
 
   rtmpdump(rtmpArgs, {
     close: (code) => {
-      if (code === 0) convEncode();
+      if (code === 0) convEncode(flvOutput);
     }
   });
 }
