@@ -6,10 +6,11 @@ import { CronJob } from 'cron';
 import * as CONST from './const/common';
 import * as CONST_SET_CRONS from './const/setCrons';
 import * as CONFIG from '../config/config.json';
+import * as ENCODE from './const/encode';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
-import ffmpeg from './ffmpeg';
+import convEncode from './convEncode';
 import { getSchedules } from './util';
 
 /**
@@ -65,44 +66,9 @@ function execJob(source, startTime, recTime, title) {
     '--stop': `${recTime}`,
   };
 
-  /**
-   * @param {string} inputFile
-   * @param {?string} outDir
-   * @param {?string} outName
-   */
-  function convEncodeMP4(inputFile, outDir = null, outName = null) {
-    const { dir, name } = path.parse(inputFile);
-
-    const encodedFilePath = path.format({
-      dir: (outDir) ? outDir : dir,
-      name: (outName) ? outName : name,
-      ext: `.${CONST.MP4_EXT}`,
-    });
-
-    const ffmgArgs = {
-      '-i': `"${inputFile}"`,
-      '-vcodec': 'libx264',
-      '-acodec': 'aac',
-    };
-
-    ffmpeg(encodedFilePath, ffmgArgs);
-  }
-
-  /**
-   * @param {string} inputFile
-   * @param {?string} type
-   * @param {string} outDir
-   * @param {string} outName
-   */
-  function convEncode(inputFile, type = CONST.MP4_EXT, outDir = null, outName = null) {
-    if (type === CONST.MP4_EXT) {
-      convEncodeMP4(inputFile, outDir, outName);
-    }
-  }
-
   rtmpdump(rtmpArgs, {
     close: (code) => {
-      if (code === 0) convEncode(flvOutput);
+      if (code === 0) convEncode(flvOutput, ENCODE.ENCODE_EXT.MP4);
     }
   });
 }
