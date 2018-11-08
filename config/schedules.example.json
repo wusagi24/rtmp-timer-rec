@@ -1,18 +1,18 @@
 [
   {
     "title": "test1",
-    "source": "rtmp://fms-base2.mitene.ad.jp/agqr/aandg1",
+    "source": "agqr",
     "recTime": 1,
     "startTime": {
-      "dayOfWeek": 2,
-      "hours": 23,
-      "minutes": 46,
+      "dayOfWeek": 4,
+      "hours": 11,
+      "minutes": 20,
       "seconds": 0
     }
   },
   {
     "title": "test2",
-    "source": "agqr",
+    "source": "rtmp://fms-base2.mitene.ad.jp/agqr/aandg1",
     "recTime": 1,
     "startTime": {
       "month": 8,

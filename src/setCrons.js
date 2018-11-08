@@ -6,9 +6,11 @@ import { CronJob } from 'cron';
 import * as CONST from './const/common';
 import * as CONST_SET_CRONS from './const/setCrons';
 import * as CONFIG from '../config/config.json';
+import * as ENCODE from './const/encode';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
+import convEncode from './convEncode';
 import { getSchedules } from './util';
 
 /**
@@ -48,21 +50,27 @@ function execJob(source, startTime, recTime, title) {
   const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
   const datetime = `${recMoment.format('YYYYMMDD')}${hour}${minute}`;
 
-  const output = path.format({
+  const outputFilename = `${title}_${datetime}`;
+
+  const flvOutput = path.format({
     dir: downloadDirPath,
-    name: `${title}_${datetime}`,
+    name: outputFilename,
     ext: `.${CONFIG.DOWNLOAD_EXT}`,
   });
 
-  const args = {
+  const rtmpArgs = {
     '--rtmp': `${source}`,
     '--live': null,
     '--realtime': null,
-    '--flv': `"${output}"`,
+    '--flv': `"${flvOutput}"`,
     '--stop': `${recTime}`,
   };
 
-  rtmpdump(args);
+  rtmpdump(rtmpArgs, {
+    close: (code) => {
+      if (code === 0) convEncode(flvOutput, ENCODE.ENCODE_EXT.MP4);
+    }
+  });
 }
 
 /**
