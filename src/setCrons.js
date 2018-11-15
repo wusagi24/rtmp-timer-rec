@@ -48,7 +48,7 @@ function execJob(source, startTime, recTime, title) {
   const hour = `0${startTime.hours}`.slice(-2);
   const minute = `0${startTime.minutes}`.slice(-2);
   const recMoment = (startTime.hours < 24) ? now : now.subtract(1, 'days');
-  const datetime = `${recMoment.format('YYYYMMDD')}${hour}${minute}`;
+  const datetime = `${recMoment.format('YYYY-MM-DD')}-${hour}${minute}`;
 
   const outputFilename = `${title}_${datetime}`;
 
