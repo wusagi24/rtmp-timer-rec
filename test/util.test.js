@@ -8,7 +8,7 @@ import * as CONST from '../src/const/common';
 import * as CONFIG from '../config/config.json';
 import * as TEST_CONST from './const';
 import { WILDCARD_CHAR } from '../src/const/setCrons';
-import { loadLocalJsonData, formatSchedule, fetchXmlStr, parseXml } from '../src/util';
+import { loadLocalJsonData, formatSchedule, fetchXmlStr, parseXml, mapSeq } from '../src/util';
 
 const DUMMY_DATA_DIR_PATH = path.join(path.resolve(''), CONST.TEST_DIR, TEST_CONST.DUMMY_DATA_DIR);
 const DUMMY_XML_PATH = path.join(DUMMY_DATA_DIR_PATH, 'agqrServerInfo.xml');
@@ -130,6 +130,30 @@ describe('Util', () => {
     it('XML 文字列が正しくオブジェクトに変換されている', async () => {
       const result = await parseXml(xml);
       assert.deepEqual(result, obj);
+    });
+  });
+
+  describe('mapSeq()', () => {
+    const asyncFunc = (ms, func, arg = null) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const result = func(arg);
+          resolve(result);
+        }, ms);
+      });
+    };
+
+    it('', async () => {
+      const inputArr = [1, 2, 3];
+
+      const outputArr = await mapSeq(inputArr, async (value, i, arr) => {
+        const wait = (arr.length - value + 1) * 100;
+        return await asyncFunc(wait, (arg) => arg, value);
+      });
+
+      inputArr.forEach((value, index) => {
+        assert.strictEqual(outputArr[index], value);
+      });
     });
   });
 });
