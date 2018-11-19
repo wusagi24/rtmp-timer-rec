@@ -30,12 +30,12 @@ import { default as ERROR_TEXT } from './const/text/error';
 /**
  * ローカルの json データをオブジェクトの形で都度読み込む（キャッシュしない）
  *
- * @param {string} path json ファイルの絶対パス
+ * @param {string} filePath json ファイルの絶対パス
  * @return {Promise<Object, Error>} オブジェクト化したデータを返す Promise オブジェクト
  */
-export function loadLocalJsonData(path) {
+export function loadLocalJsonData(filePath) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, CONST.ENCODE_TYPE, (err, json) => {
+    fs.readFile(filePath, CONST.ENCODE_TYPE, (err, json) => {
       if (err) reject(err);
 
       const obj = JSON.parse(json);
@@ -170,4 +170,26 @@ export function parseXml(xml) {
       resolve(result);
     });
   });
+}
+
+/**
+ *
+ * @param {array} arr
+ * @param {(currentValue: any, index?: number, array?: any[]) => Promise} callback
+ * @return {any[]}
+ */
+export async function mapSeq(arr, callback) {
+  // 煩雑にならないよう必要最低限の実装に留める. (Array.map() の再現ではない)
+
+  const resultArr = [];
+
+  for (let index = 0; index < arr.length; index += 1) {
+    if (index in arr) {
+      const currentValue = arr[index];
+      const currentResult = await callback(currentValue, index, arr);
+      resultArr[index] = currentResult;
+    }
+  }
+
+  return resultArr;
 }

@@ -34,8 +34,11 @@ function AgqrStreamUrl() {
   let urlCache = null;
 
   return {
+    cache: () => {
+      return urlCache;
+    },
     get: async (force = false) => {
-      if (force || !urlCache) {
+      if (force || typeof urlCache !== 'string') {
         urlCache = await fetchStreamUrl(CONFIG.AGQR_SERVER_INFO_URL);
       }
       return urlCache;

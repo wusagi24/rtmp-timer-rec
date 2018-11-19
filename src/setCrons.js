@@ -11,7 +11,7 @@ import * as ENCODE from './const/encode';
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
 import convEncode from './convEncode';
-import { getSchedules } from './util';
+import { getSchedules, mapSeq } from './util';
 
 /**
  * @typedef {Object} CronTime
@@ -211,10 +211,12 @@ export async function setCrons() {
   const schedules = await getSchedules();
   const getSourceUrl = await initGetSourceUrl();
 
-  const jobs = schedules.map(async (schedule) => {
+  const jobs = await mapSeq(schedules, async (schedule, i) => {
     const sourceUrl = await getSourceUrl(schedule.source);
-    return setJob(sourceUrl, schedule);
-  }, []);
+    const job = setJob(sourceUrl, schedule);
+
+    return job;
+  });
 
   return jobs;
 }
