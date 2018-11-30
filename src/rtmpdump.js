@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
 import * as CONST from './const/common';
 
 const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
-const rtmpdumpExePath = path.join(libsDirPath, CONST.PLATFORM.WINDOWS, CONST.RTMP_EXE);
+const rtmpdumpExePath = path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.RTMP_EXE}.exe`);
 
 /**
  * RTMPDump の js ラッパー
