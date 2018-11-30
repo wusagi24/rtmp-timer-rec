@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
 import * as CONST from './const/common';
 
 const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
-const ffmpegExePath = path.join(libsDirPath, CONST.FFMPEG_EXE);
+const ffmpegExePath = path.join(libsDirPath, CONST.PLATFORM.WINDOWS, CONST.FFMPEG_EXE);
 
 /**
  * FFmpeg の js ラッパー
