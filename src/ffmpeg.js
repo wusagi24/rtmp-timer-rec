@@ -6,7 +6,16 @@ import { spawn } from 'child_process';
 import * as CONST from './const/common';
 
 const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
-const ffmpegExePath = path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.FFMPEG_EXE}.exe`);
+const ffmpegExePath = (() => {
+  switch (process.platform) {
+    case CONST.PLATFORM.WINDOWS: {
+      return path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.FFMPEG_EXE}.exe`);
+    }
+    default: {
+      throw new Error('ffmpeg: no match platform');
+    }
+  }
+})();
 
 /**
  * FFmpeg の js ラッパー

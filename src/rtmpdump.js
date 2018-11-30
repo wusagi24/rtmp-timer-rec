@@ -6,7 +6,16 @@ import { spawn } from 'child_process';
 import * as CONST from './const/common';
 
 const libsDirPath = path.join(path.resolve(''), CONST.LIBS_DIR);
-const rtmpdumpExePath = path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.RTMP_EXE}.exe`);
+const rtmpdumpExePath = (() => {
+  switch (process.platform) {
+    case CONST.PLATFORM.WINDOWS: {
+      return path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.RTMP_EXE}.exe`);
+    }
+    default: {
+      throw new Error('rtmp: no match platform');
+    }
+  }
+})();
 
 /**
  * RTMPDump の js ラッパー
