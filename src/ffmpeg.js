@@ -11,6 +11,9 @@ const ffmpegExePath = (() => {
     case CONST.PLATFORM.WINDOWS: {
       return path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.FFMPEG_EXE}.exe`);
     }
+    case CONST.PLATFORM.LINUX: {
+      return `${CONST.FFMPEG_EXE}`;
+    }
     default: {
       throw new Error('ffmpeg: no match platform');
     }

@@ -11,6 +11,9 @@ const rtmpdumpExePath = (() => {
     case CONST.PLATFORM.WINDOWS: {
       return path.join(libsDirPath, CONST.PLATFORM.WINDOWS, `${CONST.RTMP_EXE}.exe`);
     }
+    case CONST.PLATFORM.LINUX: {
+      return `${CONST.RTMP_EXE}`;
+    }
     default: {
       throw new Error('rtmp: no match platform');
     }

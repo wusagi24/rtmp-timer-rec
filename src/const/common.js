@@ -9,6 +9,8 @@ export const TIME_ZONE = 'Asia/Tokyo';
 export const RTMP_EXE = 'rtmpdump';
 export const FFMPEG_EXE = 'ffmpeg';
 const PLATFORM_WINDOWS = 'win32';
+const PLATFORM_LINUX = 'linux';
 export const PLATFORM = {
   WINDOWS: PLATFORM_WINDOWS,
+  LINUX: PLATFORM_LINUX,
 };
