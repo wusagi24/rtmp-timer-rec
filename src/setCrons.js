@@ -9,7 +9,7 @@ import * as CONST_SET_CRONS from './const/setCrons';
 import * as CONFIG from '../config/config.json';
 import * as ENCODE from './const/encode';
 
-import log4jsConfig from './config/log4js.json';
+import log4jsConfig from './config/log4js.js';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
