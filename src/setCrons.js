@@ -228,7 +228,7 @@ export async function setCrons() {
   const schedules = await getSchedules();
   const getSourceUrl = await initGetSourceUrl();
 
-  const jobs = await mapSeq(schedules, async (schedule, i) => {
+  const jobs = await mapSeq(schedules, async (schedule) => {
     const sourceUrl = await getSourceUrl(schedule.source);
     const job = setJob(sourceUrl, schedule);
 
