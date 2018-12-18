@@ -2,11 +2,14 @@ import path from 'path';
 
 import moment from 'moment';
 import { CronJob } from 'cron';
+import log4js from 'log4js';
 
 import * as CONST from './const/common';
 import * as CONST_SET_CRONS from './const/setCrons';
 import * as CONFIG from '../config/config.json';
 import * as ENCODE from './const/encode';
+
+import log4jsConfig from './config/log4js.json';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
@@ -31,6 +34,9 @@ import { getSchedules, mapSeq } from './util';
  * @property {CronTime} startTime
  */
 
+log4js.configure(log4jsConfig);
+const logger = log4js.getLogger();
+
 const downloadDirPath = path.join(path.resolve(''), CONST.DOWNLOAD_DIR);
 
 /**
@@ -43,7 +49,8 @@ const downloadDirPath = path.join(path.resolve(''), CONST.DOWNLOAD_DIR);
  */
 function execJob(source, startTime, recTime, title) {
   const now = moment();
-  console.log(`cron running now!: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
+
+  logger.info(`cron running now!: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
 
   const hour = `0${startTime.hours}`.slice(-2);
   const minute = `0${startTime.minutes}`.slice(-2);
@@ -67,9 +74,19 @@ function execJob(source, startTime, recTime, title) {
   };
 
   rtmpdump(rtmpArgs, {
+    stdout: (data) => {
+      logger.info(`${data}`);
+    },
+    stderr: (data) => {
+      // rtmpdump はログを標準エラーに吐き出す
+      logger.debug(`${data}`);
+    },
     close: (code) => {
-      if (code === 0) convEncode(flvOutput, ENCODE.ENCODE_EXT.MP4);
-    }
+      logger.info(`rtmpdump process exited with code ${code}`);
+      if (code === 0) {
+        convEncode(flvOutput, ENCODE.ENCODE_EXT.MP4);
+      }
+    },
   });
 }
 
@@ -181,7 +198,7 @@ function setJob(source, schedule) {
     timeZone: CONST.TIME_ZONE,
   });
 
-  console.log(`set rec: ${title} ${cronTimeString} ${source}`);
+  logger.info(`set rec: ${title} ${cronTimeString} ${source}`);
 
   return job;
 }
