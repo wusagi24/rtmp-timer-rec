@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 
 import moment from 'moment';
@@ -227,6 +228,10 @@ function initGetSourceUrl() {
 export async function setCrons() {
   const schedules = await getSchedules();
   const getSourceUrl = await initGetSourceUrl();
+
+  if (!fs.existsSync(downloadDirPath)) {
+    fs.mkdirSync(downloadDirPath);
+  }
 
   const jobs = await mapSeq(schedules, async (schedule) => {
     const sourceUrl = await getSourceUrl(schedule.source);
