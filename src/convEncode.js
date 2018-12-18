@@ -4,7 +4,7 @@ import ffmpeg from './ffmpeg';
 import * as ENCODE from './const/encode';
 import log4js from 'log4js';
 
-import log4jsConfig from './config/log4js.json';
+import log4jsConfig from './config/log4js.js';
 
 log4js.configure(log4jsConfig);
 const logger = log4js.getLogger();

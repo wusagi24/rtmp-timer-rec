@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 
 import moment from 'moment';
@@ -9,7 +10,7 @@ import * as CONST_SET_CRONS from './const/setCrons';
 import * as CONFIG from '../config/config.json';
 import * as ENCODE from './const/encode';
 
-import log4jsConfig from './config/log4js.json';
+import log4jsConfig from './config/log4js.js';
 
 import AgqrStreamUrl from './AgqrStreamUrl';
 import rtmpdump from './rtmpdump';
@@ -228,7 +229,11 @@ export async function setCrons() {
   const schedules = await getSchedules();
   const getSourceUrl = await initGetSourceUrl();
 
-  const jobs = await mapSeq(schedules, async (schedule, i) => {
+  if (!fs.existsSync(downloadDirPath)) {
+    fs.mkdirSync(downloadDirPath);
+  }
+
+  const jobs = await mapSeq(schedules, async (schedule) => {
     const sourceUrl = await getSourceUrl(schedule.source);
     const job = setJob(sourceUrl, schedule);
 
