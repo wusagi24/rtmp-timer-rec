@@ -1,0 +1,9 @@
+{
+  "appenders": {
+    "console": { "type": "stdout" },
+    "app": { "type": "dateFile", "filename": "logs/app.log", "compress": true }
+  },
+  "categories": {
+    "default": { "appenders": [ "console", "app" ], "level": "DEBUG" }
+  }
+}
